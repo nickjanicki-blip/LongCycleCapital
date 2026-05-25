@@ -36,7 +36,7 @@ export default function SubscribeModal({ onClose }) {
             <h2 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(22px,3vw,28px)', fontWeight: 400, color: C.navy, lineHeight: 1.2, marginBottom: 12, textWrap: 'pretty' }}>
               Subscribe to unlock regime briefings.
             </h2>
-            <p style={{ fontFamily: 'Arial', fontSize: 13, color: C.muted, lineHeight: 1.75, marginBottom: 24 }}>
+            <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.75, marginBottom: 24 }}>
               Weekly regime briefings, market readings, and the full research archive. Free. No spam.
             </p>
             <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
