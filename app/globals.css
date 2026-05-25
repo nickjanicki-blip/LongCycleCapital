@@ -63,3 +63,19 @@ input, select, textarea { font-family: inherit; }
 
 /* Gated blur */
 .gated-blur { filter: blur(5px); pointer-events: none; user-select: none; }
+
+/* Responsive font size tokens */
+:root {
+  --text-label: 10px;
+  --text-sm:    13px;
+  --text-sub:   14px;
+  --text-base:  15px;
+}
+@media (max-width: 768px) {
+  :root {
+    --text-label: 12px;
+    --text-sm:    15px;
+    --text-sub:   16px;
+    --text-base:  17px;
+  }
+}
