@@ -57,7 +57,7 @@ export default function StrategyPage() {
               </div>
               <div>
                 <h3 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(18px,2.2vw,24px)', fontWeight: 400, color: C.navy, marginBottom: 14, lineHeight: 1.3 }}>{s.title}</h3>
-                <p style={{ fontFamily: 'Arial', fontSize: 14, color: C.text, lineHeight: 1.8, textWrap: 'pretty' }}>{s.body}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sub)', color: C.text, lineHeight: 1.8, textWrap: 'pretty' }}>{s.body}</p>
               </div>
             </div>
           ))}
@@ -68,7 +68,7 @@ export default function StrategyPage() {
         <div className="page-max">
           <div style={{ display: 'flex', gap: 16, alignItems: 'flex-start', maxWidth: 680 }}>
             <span style={{ width: 24, height: 1, background: C.gold, flexShrink: 0, marginTop: 9 }} />
-            <p style={{ fontFamily: 'Arial', fontSize: 14, color: C.muted, lineHeight: 1.8 }}>
+            <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sub)', color: C.muted, lineHeight: 1.8 }}>
               <strong style={{ color: C.text }}>On position sizing.</strong> All four strategies share a unified risk framework. Maximum 5% of capital at risk per position. Maximum 15% concurrent risk across all open positions. Leverage is a tool for capturing asymmetric setups, not for manufacturing returns where the cycle does not support them.
             </p>
           </div>
