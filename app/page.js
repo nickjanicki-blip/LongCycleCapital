@@ -74,13 +74,13 @@ function HomePhilosophy() {
             <div style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, marginBottom: 16 }}>Our Worldview</div>
             <h2 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(26px,3vw,36px)', fontWeight: 400, color: C.navy, lineHeight: 1.2, marginBottom: 18 }}>What we believe about markets</h2>
             <div style={{ width: 32, height: 1, background: C.gold, marginBottom: 20 }} />
-            <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: C.muted, lineHeight: 1.75 }}>These convictions underpin everything: strategy, positioning, hold periods, and how we think about risk.</p>
+            <p className="t-base" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.75 }}>These convictions underpin everything: strategy, positioning, hold periods, and how we think about risk.</p>
           </div>
           <div className="beliefs-grid">
             {beliefs.map((b, i) => (
               <div key={i} style={{ borderTop: `2px solid ${i < 2 ? C.navy : C.gold}`, paddingTop: 18 }}>
                 <h3 style={{ fontFamily: "Georgia,serif", fontSize: 17, fontWeight: 400, color: C.navy, lineHeight: 1.35, marginBottom: 10 }}>{b.title}</h3>
-                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.7 }}>{b.body}</p>
+                <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.7 }}>{b.body}</p>
               </div>
             ))}
           </div>
@@ -113,9 +113,9 @@ function HomeStrategyPreview() {
         <div className="four-col">
           {strategies.map((s, i) => (
             <div key={i} style={{ background: C.bg, padding: 'clamp(20px,3vw,28px) clamp(16px,2.5vw,24px)' }}>
-              <div style={{ fontFamily: 'Arial', fontSize: 'var(--text-label)', fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: C.gold, marginBottom: 12 }}>{s.label}</div>
+              <div className="t-label" style={{ fontFamily: 'Arial', fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: C.gold, marginBottom: 12 }}>{s.label}</div>
               <h3 style={{ fontFamily: "Georgia,serif", fontSize: 18, fontWeight: 400, color: C.navy, lineHeight: 1.3, marginBottom: 12 }}>{s.title}</h3>
-              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.65 }}>{s.body}</p>
+              <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.65 }}>{s.body}</p>
             </div>
           ))}
         </div>
@@ -162,12 +162,12 @@ function HomeResearchPreview() {
               {e.locked && !isObserver ? (
                 <>
                   <h3 style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 400, color: C.navy, marginBottom: 8, lineHeight: 1.3 }}>{e.title}</h3>
-                  <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
+                  <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
                 </>
               ) : (
                 <Link href={`/research/${e.slug}`} style={{ textDecoration: 'none' }}>
                   <h3 style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 400, color: C.navy, marginBottom: 8, lineHeight: 1.3 }}>{e.title}</h3>
-                  <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
+                  <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
                 </Link>
               )}
             </div>
@@ -200,7 +200,7 @@ function HomeNewsletter() {
         <h2 style={{ fontFamily: "Georgia,'Times New Roman',serif", fontSize: 'clamp(24px,3vw,34px)', fontWeight: 400, color: C.bg, lineHeight: 1.25, marginBottom: 16, textWrap: 'pretty' }}>
           Follow the experiment.
         </h2>
-        <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: 'rgba(250,249,246,0.62)', lineHeight: 1.75, marginBottom: 32, textWrap: 'pretty' }}>
+        <p className="t-base" style={{ fontFamily: 'Arial', color: 'rgba(250,249,246,0.62)', lineHeight: 1.75, marginBottom: 32, textWrap: 'pretty' }}>
           We are not accepting outside capital. But we publish our framework, our Cycle Compass readings, and our thinking publicly. No predictions. No hype. Just the work.
         </p>
         {submitted ? (
