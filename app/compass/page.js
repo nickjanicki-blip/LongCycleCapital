@@ -98,14 +98,14 @@ function PhaseNarrative() {
                 <span style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color }}>{name}</span>
                 {current && <span style={{ fontFamily: 'Arial', fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', background: color, color: '#fff', padding: '2px 7px', borderRadius: 2 }}>Current</span>}
               </div>
-              <p style={{ fontFamily: 'Arial', fontSize: 12, color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{what}</p>
+              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{what}</p>
               <div style={{ borderTop: `1px solid ${current ? 'rgba(250,249,246,0.10)' : C.border}`, paddingTop: 14 }}>
                 <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: current ? 'rgba(250,249,246,0.40)' : C.muted, marginBottom: 6 }}>Why it matters</div>
-                <p style={{ fontFamily: 'Arial', fontSize: 12, color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{why}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{why}</p>
               </div>
               <div style={{ borderTop: `1px solid ${current ? 'rgba(250,249,246,0.10)' : C.border}`, paddingTop: 14, marginTop: 'auto' }}>
                 <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color, marginBottom: 6 }}>Positioning</div>
-                <p style={{ fontFamily: 'Arial', fontSize: 12, fontStyle: 'italic', color: current ? 'rgba(250,249,246,0.80)' : C.text, lineHeight: 1.65 }}>{positioning}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', fontStyle: 'italic', color: current ? 'rgba(250,249,246,0.80)' : C.text, lineHeight: 1.65 }}>{positioning}</p>
               </div>
             </div>
           ))}
@@ -151,16 +151,16 @@ function IndicatorDrawer({ name, currentValue, currentStatus, isAuthenticated, o
             <>
               <div>
                 <div style={{ fontFamily: 'Arial', fontSize: 9, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: C.muted, marginBottom: 8 }}>What it measures</div>
-                <p style={{ fontFamily: 'Arial', fontSize: 13, color: C.text, lineHeight: 1.75, margin: 0 }}>{data.what}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.text, lineHeight: 1.75, margin: 0 }}>{data.what}</p>
               </div>
               <div>
                 <div style={{ fontFamily: 'Arial', fontSize: 9, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: C.muted, marginBottom: 8 }}>Why it matters</div>
-                <p style={{ fontFamily: 'Arial', fontSize: 13, color: C.text, lineHeight: 1.75, margin: 0 }}>{data.why}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.text, lineHeight: 1.75, margin: 0 }}>{data.why}</p>
               </div>
               {data.weight && (
                 <div style={{ background: '#F2F0EB', borderLeft: '3px solid ' + C.gold, padding: '12px 14px' }}>
                   <div style={{ fontFamily: 'Arial', fontSize: 9, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C.gold, marginBottom: 6 }}>Model Weight · {data.weight}</div>
-                  {data.composite && <p style={{ fontFamily: 'Arial', fontSize: 12, color: C.text, lineHeight: 1.7, margin: 0 }}>{data.composite}</p>}
+                  {data.composite && <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.text, lineHeight: 1.7, margin: 0 }}>{data.composite}</p>}
                 </div>
               )}
               <div>
@@ -194,7 +194,7 @@ function IndicatorDrawer({ name, currentValue, currentStatus, isAuthenticated, o
                 <rect x="13" y="20" width="6" height="7" rx="1" fill="#FAF9F6" opacity="0.7" />
               </svg>
               <div style={{ fontFamily: "Georgia,serif", fontSize: 17, color: C.navy, marginBottom: 10 }}>LP Access Required</div>
-              <p style={{ fontFamily: 'Arial', fontSize: 13, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>Model weighting, composite contribution, and signal thresholds are available to authenticated observers.</p>
+              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>Model weighting, composite contribution, and signal thresholds are available to authenticated observers.</p>
               <div style={{ fontFamily: 'Arial', fontSize: 12, color: C.muted, fontStyle: 'italic', textAlign: 'left', background: '#F2F0EB', padding: '10px 14px', borderRadius: 2 }}>{data.what.slice(0, 100)}...</div>
             </div>
           )}
@@ -237,7 +237,7 @@ const gatedRows = [
 function GatedContent({ onRowClick }) {
   const statusColor = { OK: C.green, CAUTION: C.amber, WARNING: C.orange, ALERT: C.red };
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Arial', fontSize: 13 }}>
+    <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Arial', fontSize: 'var(--text-sm)' }}>
       <thead>
         <tr style={{ borderBottom: `2px solid ${C.border}` }}>
           {['Indicator', 'Reading', 'Context', 'Status'].map(h => (
