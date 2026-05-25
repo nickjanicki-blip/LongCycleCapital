@@ -64,6 +64,18 @@ input, select, textarea { font-family: inherit; }
 /* Gated blur */
 .gated-blur { filter: blur(5px); pointer-events: none; user-select: none; }
 
+/* Strategy page stats grid */
+.strategy-stats { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid rgba(44,62,80,0.10); }
+.strategy-stat  { padding: clamp(20px,3.5vw,32px) clamp(10px,2vw,24px); border-right: 1px solid rgba(44,62,80,0.10); }
+.strategy-stat:first-child { padding-left: 0; }
+.strategy-stat:last-child  { border-right: none; padding-right: 0; }
+@media (max-width: 600px) {
+  .strategy-stats { grid-template-columns: 1fr 1fr; }
+  .strategy-stat:nth-child(2) { border-right: none; padding-right: 0; }
+  .strategy-stat:nth-child(3) { border-top: 1px solid rgba(44,62,80,0.10); padding-left: 0; }
+  .strategy-stat:nth-child(4) { border-top: 1px solid rgba(44,62,80,0.10); }
+}
+
 /* Responsive text size classes — use className instead of inline fontSize */
 .t-label { font-size: 10px; }
 .t-sm    { font-size: 13px; }
