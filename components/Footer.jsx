@@ -28,7 +28,7 @@ export default function Footer() {
                 <div style={{ height: 0.75, background: C.goldLight, marginTop: 3 }} />
               </div>
             </Link>
-            <p style={{ fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 'var(--text-sm)', color: 'rgba(250,249,246,0.50)', lineHeight: 1.75, marginBottom: 24, maxWidth: 260 }}>
+            <p className="t-sm" style={{ fontFamily: 'Arial,Helvetica,sans-serif', color: 'rgba(250,249,246,0.50)', lineHeight: 1.75, marginBottom: 24, maxWidth: 260 }}>
               A self-managed fund exploring long-cycle macro investing. We document our framework and thinking publicly.
             </p>
             <div style={{ fontFamily: "Georgia,serif", fontSize: 14, fontStyle: 'italic', color: C.goldLight, opacity: 0.75 }}>
@@ -41,7 +41,7 @@ export default function Footer() {
               <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(250,249,246,0.35)', marginBottom: 16 }}>{title}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {items.map(([label, href]) => (
-                  <Link key={label} href={href} style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: 'rgba(250,249,246,0.60)', textDecoration: 'none' }}>
+                  <Link key={label} href={href} className="t-sm" style={{ fontFamily: 'Arial', color: 'rgba(250,249,246,0.60)', textDecoration: 'none' }}>
                     {label}
                   </Link>
                 ))}
