@@ -50,13 +50,13 @@ export default function AboutPage() {
               <p style={{ fontFamily: "Georgia,serif", fontSize: 20, fontStyle: 'italic', color: C.navy, lineHeight: 1.65, marginBottom: 32, textWrap: 'pretty' }}>
                 &ldquo;The most important things I learned about business had nothing to do with hustle or vision. They were about which cycle I was in and whether I was honest with myself about it.&rdquo;
               </p>
-              <p style={{ fontFamily: 'Arial', fontSize: 15, color: C.text, lineHeight: 1.8, marginBottom: 20, textWrap: 'pretty' }}>
+              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: C.text, lineHeight: 1.8, marginBottom: 20, textWrap: 'pretty' }}>
                 In 2009, at the depth of the financial crisis, Nicholas Janicki opened the first True REST float therapy location. Most people thought the timing was wrong. But opening a wellness franchise when construction, leasing, and talent were cheapest turned out to be an enormous structural advantage. That was the first real lesson in cycle awareness.
               </p>
-              <p style={{ fontFamily: 'Arial', fontSize: 15, color: C.text, lineHeight: 1.8, marginBottom: 20, textWrap: 'pretty' }}>
+              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: C.text, lineHeight: 1.8, marginBottom: 20, textWrap: 'pretty' }}>
                 Over 17 years, True REST grew to 50+ locations across 22 states. But the education was not in the growth. It was in watching what happened during every cycle that came after: the slow 2013–2016 slog, the 2017–2019 expansion phase, and then 2020. The businesses that survived were the ones that had preserved capital and built lean. The ones that had not, did not.
               </p>
-              <p style={{ fontFamily: 'Arial', fontSize: 15, color: C.text, lineHeight: 1.8, textWrap: 'pretty' }}>
+              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: C.text, lineHeight: 1.8, textWrap: 'pretty' }}>
                 Long Cycle Capital is the direct expression of that education applied to markets. The framework is not theoretical, it is the same logic that made the difference between a location that thrived and one that closed. Which cycle are we in? What does that mean for positioning? What does patience actually buy you?
               </p>
             </div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
               <div style={{ fontFamily: "'Courier New',monospace", fontSize: 12, color: C.gold, fontWeight: 700, paddingTop: 3 }}>{num}</div>
               <div>
                 <h3 style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 400, color: C.navy, lineHeight: 1.3, marginBottom: 12 }}>{title}</h3>
-                <p style={{ fontFamily: 'Arial', fontSize: 14, color: C.muted, lineHeight: 1.75, textWrap: 'pretty' }}>{body}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sub)', color: C.muted, lineHeight: 1.75, textWrap: 'pretty' }}>{body}</p>
               </div>
             </div>
           ))}
@@ -101,7 +101,7 @@ export default function AboutPage() {
               <p style={{ fontFamily: 'Arial', fontSize: 15, color: C.text, lineHeight: 1.8, marginBottom: 18, textWrap: 'pretty' }}>
                 The last major inflection in the long-term debt cycle occurred around 1930–1933. Roughly 90 years later, the structural indicators are converging: debt-to-GDP levels, real interest rate trajectories, reserve currency dynamics. History suggests a period of significant structural adjustment is ahead, most likely concentrated between 2028 and 2033.
               </p>
-              <p style={{ fontFamily: 'Arial', fontSize: 15, color: C.text, lineHeight: 1.8, textWrap: 'pretty' }}>
+              <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: C.text, lineHeight: 1.8, textWrap: 'pretty' }}>
                 This is not a prediction. It is a probabilistic framework that informs our time horizon, our strategy selection, and our willingness to hold positions through short-term noise. The four strategies we run are each designed for this macro backdrop.
               </p>
             </div>
@@ -115,14 +115,14 @@ export default function AboutPage() {
             <div style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, marginBottom: 12 }}>Who We Are For</div>
             <h2 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(26px,3vw,36px)', fontWeight: 400, color: C.navy }}>We are not for everyone.</h2>
           </div>
-          <p style={{ fontFamily: 'Arial', fontSize: 15, color: C.text, lineHeight: 1.8, maxWidth: 640, marginBottom: 44, textWrap: 'pretty' }}>
+          <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-base)', color: C.text, lineHeight: 1.8, maxWidth: 640, marginBottom: 44, textWrap: 'pretty' }}>
             We manage proprietary capital and are not currently accepting outside investors. When and if that changes, our aligned observer will look like this:
           </p>
           <div className="values-row">
             {lpValues.map(([title, body]) => (
               <div key={title} style={{ flex: 1 }}>
                 <div style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: C.gold, marginBottom: 10 }}>{title}</div>
-                <p style={{ fontFamily: 'Arial', fontSize: 13, color: C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{body}</p>
+                <p style={{ fontFamily: 'Arial', fontSize: 'var(--text-sm)', color: C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{body}</p>
               </div>
             ))}
           </div>
