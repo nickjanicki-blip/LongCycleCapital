@@ -1,0 +1,65 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body { background: #FAF9F6; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+
+/* Nav visibility */
+.desktop-nav { display: flex !important; }
+.mob-toggle  { display: none !important; }
+@media (max-width: 768px) {
+  .desktop-nav { display: none !important; }
+  .mob-toggle  { display: flex !important; }
+}
+
+/* Two-col (sidebar + content) */
+.two-col { display: grid; grid-template-columns: 1fr 2fr; gap: clamp(32px,5vw,64px); align-items: start; }
+@media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+/* Philosophy layout */
+.phil-layout { display: grid; grid-template-columns: 1fr 2fr; gap: clamp(32px,5vw,64px); align-items: start; }
+@media (max-width: 768px) { .phil-layout { grid-template-columns: 1fr; } }
+
+/* 2-col belief cards */
+.beliefs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media (max-width: 540px) { .beliefs-grid { grid-template-columns: 1fr; } }
+
+/* 4-col strategy cards */
+.four-col { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(44,62,80,0.10); }
+@media (max-width: 860px) { .four-col { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 480px) { .four-col { grid-template-columns: 1fr; } }
+
+/* Indicator cards */
+.indicator-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 12px; }
+
+/* About values row */
+.values-row { display: flex; gap: 48px; }
+@media (max-width: 600px) { .values-row { flex-direction: column; gap: 28px; } }
+
+/* Research list row */
+.research-row { display: grid; grid-template-columns: 140px 1fr auto; gap: 32px; padding: 32px 0; border-top: 1px solid rgba(44,62,80,0.10); cursor: pointer; }
+@media (max-width: 640px) { .research-row { grid-template-columns: 1fr; gap: 6px; } .read-time-plain { display: none; } }
+
+/* Strategy item */
+.strategy-item { display: grid; grid-template-columns: 80px 1fr; gap: 32px; padding: 40px 0; border-top: 1px solid rgba(44,62,80,0.10); }
+@media (max-width: 560px) { .strategy-item { grid-template-columns: 1fr; gap: 8px; } }
+
+/* Hero stats */
+.stats-row { display: flex; border-top: 1px solid rgba(250,249,246,0.12); padding-top: 40px; margin-top: 56px; flex-wrap: wrap; gap: 0; }
+.stat-item  { flex: 1 1 110px; padding-right: 32px; border-right: 1px solid rgba(250,249,246,0.10); margin-right: 32px; margin-bottom: 12px; }
+.stat-item:last-child { border-right: none; margin-right: 0; }
+@media (max-width: 480px) { .stat-item { border-right: none !important; } }
+
+/* Footer */
+.footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding: 64px 0 48px; border-bottom: 1px solid rgba(250,249,246,0.10); }
+@media (max-width: 860px)  { .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; padding: 48px 0 32px; } }
+@media (max-width: 480px)  { .footer-top { grid-template-columns: 1fr; } }
+
+/* Shared layout helpers */
+.page-max { max-width: 1200px; margin: 0 auto; padding: 0 clamp(20px,5vw,40px); }
+.page-narrow { max-width: 900px; margin: 0 auto; padding: 0 clamp(20px,5vw,40px); }
+.section-pad { padding: clamp(56px,8vw,96px) 0; }
+
+/* Gated blur */
+.gated-blur { filter: blur(5px); pointer-events: none; user-select: none; }

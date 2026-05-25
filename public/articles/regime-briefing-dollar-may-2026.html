@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regime Briefing — May 9, 2026</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { background: #FAF9F6; color: #2C3E50; }
+
+  .wrapper {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: clamp(40px,8vw,80px) clamp(24px,5vw,40px);
+  }
+
+  .letter-meta {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #B8860B;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 32px;
+  }
+  .letter-meta::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: #B8860B;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 400; color: #1F4E78;
+    line-height: 1.15; letter-spacing: -0.02em;
+    margin-bottom: 10px; text-wrap: pretty;
+  }
+
+  .meta-row {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; color: #7F8C8D;
+    margin-bottom: 36px;
+  }
+
+  .divider { width: 40px; height: 1px; background: #B8860B; margin-bottom: 36px; }
+
+  p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(15px, 1.8vw, 17px);
+    line-height: 1.85; color: #2C3E50;
+    margin-bottom: 24px; text-wrap: pretty;
+  }
+
+  h2 {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7F8C8D;
+    margin-top: 48px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before {
+    content: ''; display: inline-block;
+    width: 20px; height: 1px; background: #7F8C8D;
+  }
+
+  /* DXY reading banner */
+  .dxy-banner {
+    background: #1F4E78;
+    border-radius: 3px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .banner-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: rgba(250,249,246,0.50); margin-bottom: 6px;
+  }
+  .banner-val {
+    font-family: Georgia, serif;
+    font-size: 38px; font-weight: 400;
+    color: #FAF9F6; line-height: 1;
+  }
+  .banner-sub {
+    font-family: Arial, sans-serif;
+    font-size: 10px; color: rgba(250,249,246,0.40);
+    margin-top: 6px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .banner-status {
+    text-align: right;
+  }
+  .banner-status .tag {
+    display: inline-block;
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: #D4AC0D;
+    border: 1px solid #D4AC0D;
+    padding: 4px 10px; border-radius: 2px;
+    margin-bottom: 10px;
+  }
+  .banner-status .note {
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: rgba(250,249,246,0.50);
+    line-height: 1.5;
+  }
+
+  /* History table */
+  .history-table {
+    width: 100%; border-collapse: collapse; margin-bottom: 32px;
+  }
+  .history-table th {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #7F8C8D; text-align: left;
+    padding: 0 0 12px 0;
+    border-bottom: 2px solid rgba(44,62,80,0.10);
+  }
+  .history-table td {
+    font-family: Arial, sans-serif;
+    font-size: 13px; color: #2C3E50;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(44,62,80,0.08);
+    vertical-align: top;
+    padding-right: 16px;
+  }
+  .history-table td.peak {
+    font-family: Georgia, serif;
+    font-size: 16px; color: #1F4E78;
+    white-space: nowrap;
+  }
+  .history-table td.outcome {
+    color: #27AE60; font-weight: 600;
+  }
+
+  /* Callout */
+  .callout {
+    background: #F2F0EB;
+    border-left: 3px solid #B8860B;
+    padding: 18px 22px;
+    margin: 32px 0;
+  }
+  .callout p {
+    font-size: 14px; color: #2C3E50; margin-bottom: 0;
+    font-family: Arial, sans-serif; line-height: 1.7;
+  }
+  .callout strong { color: #1F4E78; }
+
+  /* Sources */
+  .sources {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sources h3 {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: #7F8C8D; margin-bottom: 14px;
+  }
+  .sources ol { padding-left: 18px; }
+  .sources li {
+    font-family: Arial, sans-serif;
+    font-size: 12px; color: #7F8C8D;
+    line-height: 1.7; margin-bottom: 8px;
+  }
+  .sources a { color: #1F4E78; text-decoration: underline; text-underline-offset: 2px; }
+
+  .disclaimer {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D; line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="letter-meta">Regime Briefing · Long Cycle Capital</div>
+  <h1>Dollar Strength Index Approaching Extreme</h1>
+  <div class="meta-row">May 9, 2026 · 5 min read</div>
+  <div class="divider"></div>
+
+  <!-- DXY banner -->
+  <div class="dxy-banner">
+    <div>
+      <div class="banner-label">US Dollar Index (DXY)</div>
+      <div class="banner-val">104.8</div>
+      <div class="banner-sub">As of May 9, 2026</div>
+    </div>
+    <div class="banner-status">
+      <div class="tag">Watch</div>
+      <div class="note">Approaching<br>multi-year extreme</div>
+    </div>
+  </div>
+
+  <p>
+    The US Dollar Index is at 104.8. That number matters not because it represents an absolute extreme, but because the 100–107 band has historically marked the upper boundary of sustained dollar strength before multi-year reversals. We are inside that band. The setup is not yet a trade. It is a signal to pay attention.
+  </p>
+
+  <h2>What the History Shows</h2>
+
+  <p>
+    Dollar cycles are long. They typically run 5 to 7 years in each direction. The peaks are easier to identify in retrospect than in real time, which is exactly why we track them systematically. Every major dollar peak in the last 40 years has been followed by a significant multi-year reversal that rewarded patient positioning.
+  </p>
+
+  <table class="history-table">
+    <thead>
+      <tr>
+        <th>Period</th>
+        <th>Peak DXY</th>
+        <th>Catalyst</th>
+        <th>Subsequent Move</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1984–1985</td>
+        <td class="peak">~164</td>
+        <td>Fed tightening, strong US growth</td>
+        <td class="outcome">−46% over 3 years (Plaza Accord)</td>
+      </tr>
+      <tr>
+        <td>2001–2002</td>
+        <td class="peak">~120</td>
+        <td>Post-dot-com flight to US assets</td>
+        <td class="outcome">−36% over 6 years</td>
+      </tr>
+      <tr>
+        <td>2014–2016</td>
+        <td class="peak">~103</td>
+        <td>Fed divergence from ECB/BOJ</td>
+        <td class="outcome">−15% over 2 years, then range-bound</td>
+      </tr>
+      <tr>
+        <td>2022</td>
+        <td class="peak">~114</td>
+        <td>Aggressive Fed hiking cycle</td>
+        <td class="outcome">−14% in 12 months, −9.6% in 2025</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The 2022 peak at 114 was followed by a significant decline through 2023 and 2025. <sup>[1]</sup> The DXY's recovery to 104.8 in early 2026 has been driven primarily by tariff-related safe-haven flows and the Federal Reserve holding rates at 3.50–3.75% while other central banks have moved further into easing cycles. <sup>[2]</sup> That policy divergence is what makes this level interesting. It is likely artificial, or at minimum unsustainable, at current levels.
+  </p>
+
+  <h2>Why the Current Level Is Structurally Fragile</h2>
+
+  <p>
+    Three factors are holding the dollar elevated right now. None of them are durable.
+  </p>
+
+  <p>
+    First, tariff uncertainty has created short-term demand for dollar-denominated assets as a safe haven. That demand is a function of fear, not fundamental valuation. Fear-driven flows reverse when the fear does.
+  </p>
+
+  <p>
+    Second, the Fed is at or near the end of its easing cycle at 3.50–3.75%. The interest rate differential that has supported dollar strength is compressing. As the ECB and BOJ continue easing, the gap closes further.
+  </p>
+
+  <p>
+    Third, the US fiscal trajectory continues to deteriorate. Sustained dollar strength and unsustainable fiscal deficits have historically been incompatible over multi-year periods. The market will resolve that tension, eventually. When it does, it tends to resolve quickly.
+  </p>
+
+  <div class="callout">
+    <p><strong>Framework note.</strong> A DXY at 104.8 is not a trigger for the currency strategy. Our entry criteria require both the fundamental cycle setup and a technical confirmation of reversal. We are watching for: (1) DXY breaking above 107 and failing to hold, signaling a false breakout; or (2) a confirmed lower high forming below 104 over the next 3–6 months. Either development would move this from "watch" to "position."</p>
+  </div>
+
+  <h2>What This Means for the Currency Strategy</h2>
+
+  <p>
+    The Long Cycle Capital currency strategy trades central bank policy divergences at multi-year extremes. The current DXY level, combined with the widening policy gap between the Fed and other major central banks, is building toward exactly the kind of setup the strategy is designed for.
+  </p>
+
+  <p>
+    The most likely expression of this trade — when triggered — is long EUR/USD or short USD/JPY, depending on which divergence resolves first. The ECB has moved further into easing, making EUR/USD the more straightforward setup. The BOJ's path is more complex given Japan's fiscal and inflation dynamics.
+  </p>
+
+  <p>
+    We are not in the trade. We are positioned to enter the trade when the framework says to. The difference matters: entering too early on a "likely reversal" has the same cost as being wrong about direction. We wait for confirmation.
+  </p>
+
+  <div class="sources">
+    <h3>Sources</h3>
+    <ol>
+      <li>Invesco, <em>Above the Noise: Rethinking 2025 Narratives</em>, December 2025: USD DXY declined 9.6% in 2025. <a href="https://www.invesco.com/us/en/insights/2025-narratives-fed-ai-rates.html" target="_blank">Read →</a></li>
+      <li>Federal Reserve, <em>FOMC Minutes, December 9–10, 2025</em>: Three consecutive cuts, Fed funds at 3.50–3.75%. <a href="https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm" target="_blank">Read →</a></li>
+      <li>BBVA Research, <em>US Yield Curve Steepens After Fed's 2025 Rate Cuts Conclude</em>, December 2025. <a href="https://www.bbvaresearch.com/en/publicaciones/us-yield-curve-steepens-further-after-feds-2025-rate-cuts-conclude/" target="_blank">Read →</a></li>
+    </ol>
+  </div>
+
+  <div class="disclaimer">
+    This briefing is for informational purposes only. It is not investment advice. Long Cycle Capital manages proprietary capital only. Currency positions referenced are illustrative of the framework, not current or recommended trades.
+  </div>
+
+</div>
+</body>
+</html>

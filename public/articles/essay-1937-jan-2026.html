@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>History Rhymes: 1937 and 2026</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { background: #FAF9F6; color: #2C3E50; }
+
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: clamp(40px,8vw,80px) clamp(24px,5vw,40px);
+  }
+
+  .letter-meta {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #B8860B;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 32px;
+  }
+  .letter-meta::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: #B8860B;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 400; color: #1F4E78;
+    line-height: 1.12; letter-spacing: -0.02em;
+    margin-bottom: 10px; text-wrap: pretty;
+  }
+
+  .meta-row {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; color: #7F8C8D;
+    margin-bottom: 40px;
+  }
+
+  .divider { width: 40px; height: 1px; background: #B8860B; margin-bottom: 40px; }
+
+  p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.85; color: #2C3E50;
+    margin-bottom: 28px; text-wrap: pretty;
+  }
+
+  h2 {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7F8C8D;
+    margin-top: 56px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before {
+    content: ''; display: inline-block;
+    width: 20px; height: 1px; background: #7F8C8D;
+  }
+
+  blockquote {
+    border-left: 3px solid #B8860B;
+    padding: 6px 0 6px 24px;
+    margin: 36px 0;
+  }
+  blockquote p {
+    font-size: clamp(17px, 2vw, 20px);
+    font-style: italic; color: #1F4E78;
+    margin-bottom: 10px; line-height: 1.65;
+  }
+  blockquote cite {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  blockquote a { color: #7F8C8D; text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%; border-collapse: collapse;
+    margin: 36px 0;
+  }
+  .compare-table th {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 10px 16px 14px 0;
+    border-bottom: 2px solid rgba(44,62,80,0.12);
+    text-align: left; color: #7F8C8D;
+  }
+  .compare-table th.yr { color: #1F4E78; font-size: 13px; letter-spacing: 0; text-transform: none; }
+  .compare-table td {
+    font-family: Arial, sans-serif;
+    font-size: 13px; color: #2C3E50;
+    padding: 13px 16px 13px 0;
+    border-bottom: 1px solid rgba(44,62,80,0.08);
+    vertical-align: top; line-height: 1.55;
+  }
+  .compare-table td.dim { color: #7F8C8D; }
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  /* Timeline */
+  .timeline {
+    margin: 36px 0;
+    position: relative;
+    padding-left: 24px;
+    border-left: 2px solid rgba(44,62,80,0.12);
+  }
+  .tl-item {
+    margin-bottom: 28px;
+    position: relative;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -30px; top: 5px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #B8860B;
+    border: 2px solid #FAF9F6;
+  }
+  .tl-year {
+    font-family: 'Courier New', monospace;
+    font-size: 11px; font-weight: 700;
+    color: #B8860B; margin-bottom: 5px;
+    letter-spacing: 0.04em;
+  }
+  .tl-text {
+    font-family: Arial, sans-serif;
+    font-size: 13px; color: #2C3E50;
+    line-height: 1.65;
+  }
+
+  /* Callout */
+  .callout {
+    background: #F2F0EB;
+    border-left: 3px solid #B8860B;
+    padding: 18px 22px; margin: 32px 0;
+  }
+  .callout p {
+    font-size: 14px; color: #2C3E50; margin-bottom: 0;
+    font-family: Arial, sans-serif; line-height: 1.7;
+  }
+  .callout strong { color: #1F4E78; }
+
+  /* Stat strip */
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1px; background: rgba(44,62,80,0.10);
+    margin: 36px 0;
+  }
+  .stat-strip-cell {
+    background: #F2F0EB; padding: 18px 20px;
+  }
+  .stat-strip-cell .yr {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #B8860B; margin-bottom: 8px;
+  }
+  .stat-strip-cell .val {
+    font-family: Georgia, serif;
+    font-size: 22px; font-weight: 400;
+    color: #1F4E78; line-height: 1; margin-bottom: 5px;
+  }
+  .stat-strip-cell .lbl {
+    font-family: Arial, sans-serif;
+    font-size: 10px; color: #7F8C8D; line-height: 1.4;
+  }
+
+  .sources {
+    margin-top: 64px; padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sources h3 {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: #7F8C8D; margin-bottom: 16px;
+  }
+  .sources ol { padding-left: 20px; }
+  .sources li {
+    font-family: Arial, sans-serif;
+    font-size: 12px; color: #7F8C8D;
+    line-height: 1.7; margin-bottom: 8px;
+  }
+  .sources a { color: #1F4E78; text-decoration: underline; text-underline-offset: 2px; }
+
+  .sign-off {
+    margin-top: 56px; padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sign-off p { font-family: Georgia, serif; font-size: 16px; color: #7F8C8D; margin-bottom: 6px; }
+  .sign-off .name { font-family: Georgia, serif; font-size: 18px; color: #1F4E78; font-style: italic; }
+
+  .disclaimer {
+    margin-top: 32px; padding-top: 24px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D; line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="letter-meta">Quarterly Essay · Long Cycle Capital</div>
+  <h1>History Rhymes: 1937 and 2026</h1>
+  <div class="meta-row">January 2026 · 22 min read</div>
+  <div class="divider"></div>
+
+  <p>
+    Mark Twain almost certainly never said "history doesn't repeat itself, but it rhymes." The attribution is wrong, the authorship disputed. But the observation is correct, and it keeps getting quoted because markets keep proving it. The same structural conditions, the same psychological patterns, and the same institutional responses produce the same outcomes with enough regularity that careful students of financial history gain a genuine edge.
+  </p>
+
+  <p>
+    This essay is about 1937. It is also about 2026. The rhyme between them is specific enough to be worth documenting carefully.
+  </p>
+
+  <h2>What Happened in 1937</h2>
+
+  <p>
+    To understand 1937, you need to understand the four years before it. From 1933 to 1937, the US economy staged one of the most dramatic recoveries in its history. GDP grew at roughly 9% per year. Unemployment fell from 25% to 14%. Stock prices tripled. The banking system, cleaned up after Roosevelt's bank holiday and the creation of the FDIC, was functioning again. The worst seemed to be over.
+  </p>
+
+  <p>
+    It wasn't.
+  </p>
+
+  <p>
+    In 1937, two things happened simultaneously. The Federal Reserve, alarmed by inflation fears and the belief that the recovery had healed the economy, doubled bank reserve requirements in three steps, effectively tightening monetary conditions sharply. At the same time, the Roosevelt administration, facing political pressure over the federal deficit, cut government spending significantly. The fiscal and monetary tightening arrived together.
+  </p>
+
+  <p>
+    The result was the "recession within the depression." GDP fell nearly 11% in 1938. Unemployment, which had fallen to 14%, spiked back above 19%. Stock prices fell roughly 50% from their 1937 peak. The economy that everyone thought had recovered had not. The underlying debt and structural imbalances were still there. The recovery had been real but fragile, dependent on continued policy support that was withdrawn too early.
+  </p>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-year">1929–1933</div>
+      <div class="tl-text">The Great Depression. GDP falls 30%. Unemployment peaks at 25%. Deflation, bank failures, credit collapse.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1933–1937</div>
+      <div class="tl-text">Strong recovery. FDR's New Deal spending. Fed accommodative. GDP grows ~9%/yr. Unemployment falls from 25% to 14%. Markets triple.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1937</div>
+      <div class="tl-text">Fed doubles reserve requirements (tightening). FDR cuts spending (fiscal tightening). Both happen simultaneously.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1938</div>
+      <div class="tl-text">Recession within the depression. GDP falls 11%. Unemployment spikes from 14% to 19%. Stocks fall 50%.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-year">1939–1945</div>
+      <div class="tl-text">War spending ends the depression definitively. Massive fiscal stimulus. Full employment returns. The structural resolution of the debt cycle through inflation and growth.</div>
+    </div>
+  </div>
+
+  <p>
+    The lesson most investors take from this is simple: don't tighten policy too early during a recovery. That is true but incomplete. The deeper lesson is that a recovery built on policy support is not the same as a structural recovery. The difference only becomes visible when the support is removed.
+  </p>
+
+  <h2>The 2020–2026 Sequence</h2>
+
+  <p>
+    Now look at what has happened since 2020. The sequence is not identical to 1933–1938. History rhymes, it doesn't copy. But the structural elements are present.
+  </p>
+
+  <p>
+    In 2020, the US economy experienced its sharpest contraction since the Great Depression: GDP fell roughly 3.4% for the year, with the second quarter alone down nearly 32% annualized. The policy response was historically large. The Federal Reserve's balance sheet doubled. Congress deployed trillions in fiscal stimulus. Interest rates went to zero. The recovery that followed was sharp and real.
+  </p>
+
+  <p>
+    From 2020 to 2022, GDP recovered strongly. Equity markets staged dramatic recoveries. Unemployment fell from 15% to below 4% in 18 months. The speed of the recovery was historically unprecedented. It was also, in retrospect, significantly driven by the scale of the policy support rather than the underlying structural health of the economy.
+  </p>
+
+  <p>
+    In 2022, the Federal Reserve executed the most aggressive tightening cycle in 40 years, raising rates from near zero to over 5% in 18 months. The explicit goal was to contain inflation that had run to 9%. The implicit risk: that the tightening would expose the fragility underneath the policy-supported recovery, the same risk that materialized in 1937.
+  </p>
+
+  <p>
+    The 2022–2023 tightening did not produce an immediate recession. It produced disinflation, a resilient labor market, and equity markets that recovered sharply in 2023–2024. The Fed began cutting rates in 2024, executed three cuts to end 2025 at 3.50–3.75%, and then paused. <sup>[1]</sup>
+  </p>
+
+  <p>
+    We are now in early 2026. The economy is growing but slowing. Credit spreads, historically tight through most of 2025, have begun widening in pockets. <sup>[2]</sup> The yield curve remains inverted after 14 consecutive months. The labor market, which held up longer than almost anyone expected, is showing early signs of softening: initial jobless claims trending above 245k, payroll growth decelerating.
+  </p>
+
+  <p>
+    Sound familiar?
+  </p>
+
+  <h2>The Parallel, Side by Side</h2>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th>Factor</th>
+        <th class="yr">1933–1937</th>
+        <th class="yr">2020–2026</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="dim">Initial shock</td>
+        <td>Great Depression: GDP −30%, unemployment 25%</td>
+        <td>COVID recession: GDP −3.4% annual, −32% Q2 annualized</td>
+      </tr>
+      <tr>
+        <td class="dim">Policy response</td>
+        <td>New Deal spending, banking reform, dollar devaluation</td>
+        <td>Zero rates, $5T+ fiscal stimulus, Fed balance sheet doubled</td>
+      </tr>
+      <tr>
+        <td class="dim">Recovery speed</td>
+        <td>~9% GDP growth per year, 1933–1937</td>
+        <td>Rapid V-shaped recovery, labor market recovered in 18 months</td>
+      </tr>
+      <tr>
+        <td class="dim">Tightening error</td>
+        <td>Fed doubles reserve requirements, FDR cuts spending (1937)</td>
+        <td>Fed hikes 525bps in 18 months, fiscal cliff as stimulus expires (2022–2023)</td>
+      </tr>
+      <tr>
+        <td class="dim">Trade/tariff backdrop</td>
+        <td>Smoot-Hawley tariffs (1930), global trade collapse</td>
+        <td>Tariff escalation 2025–2026, global trade uncertainty</td>
+      </tr>
+      <tr>
+        <td class="dim">Geopolitical context</td>
+        <td>Rising European fascism, Japan expansionism</td>
+        <td>US-China tensions, Middle East conflict, European instability</td>
+      </tr>
+      <tr>
+        <td class="dim">Where we are now</td>
+        <td>1937: apparent recovery, policy normalizing</td>
+        <td>2026: apparent recovery, policy normalizing</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <p><strong>The key question, then and now:</strong> is the recovery structural or policy-dependent? In 1937, the answer turned out to be policy-dependent. The withdrawal of support revealed the fragility underneath. The question for 2026 is the same. The answer will be revealed the same way: by what happens when support is reduced or removed.</p>
+  </div>
+
+  <h2>What the 1937 Parallel Means for Asset Prices</h2>
+
+  <p>
+    In 1937, equities peaked in March. The decline that followed was not gradual. The S&amp;P (in its predecessor index form) fell approximately 50% in 12 months. <sup>[3]</sup> Investors who had watched three years of strong gains grew complacent. The recovery had felt so durable. The tightening seemed so reasonable. By the time it was clear that the economy was re-entering contraction, much of the damage was done.
+  </p>
+
+  <div class="stat-strip">
+    <div class="stat-strip-cell">
+      <div class="yr">1937</div>
+      <div class="val">~50%</div>
+      <div class="lbl">US equity decline, peak to trough (12 months)</div>
+    </div>
+    <div class="stat-strip-cell">
+      <div class="yr">1937</div>
+      <div class="val">+19%</div>
+      <div class="lbl">Unemployment, after falling to 14%</div>
+    </div>
+    <div class="stat-strip-cell">
+      <div class="yr">1937</div>
+      <div class="val">−11%</div>
+      <div class="lbl">GDP contraction in 1938</div>
+    </div>
+    <div class="stat-strip-cell">
+      <div class="yr">1938</div>
+      <div class="val">+60%</div>
+      <div class="lbl">Equity recovery from 1938 lows to 1940</div>
+    </div>
+  </div>
+
+  <p>
+    The 1938 lows were, in hindsight, among the best buying opportunities of the 20th century. Not because anyone could predict the war spending that would end the depression. But because asset prices had reached levels where even a mediocre outcome would have produced strong returns over the following decade.
+  </p>
+
+  <p>
+    This is precisely what the crisis accumulation strategy is built for. Not to predict the downturn. Not to time it. But to have the capital, the framework, and the psychological preparation to buy when the environment matches the historical template: maximum fear, depressed prices, policy reversal already underway.
+  </p>
+
+  <h2>Where the Rhyme Breaks Down</h2>
+
+  <p>
+    No historical parallel is clean. There are important ways in which 2026 is not 1937, and those differences matter.
+  </p>
+
+  <p>
+    First, the US in 1937 was still on a modified gold standard, which constrained monetary policy in ways that don't apply today. The Fed of 2026 has far more flexibility to respond than the Fed of 1937 did. That flexibility could mean the adjustment is managed more smoothly, or it could mean it is deferred longer than the underlying fundamentals would suggest.
+  </p>
+
+  <p>
+    Second, the global context is different. In 1937, the US remained relatively isolated from the worst of the European political deterioration. In 2026, the US is deeply integrated into a global financial system where contagion can travel faster and through more channels than in the 1930s.
+  </p>
+
+  <p>
+    Third, and most importantly, the technological context is different. AI-driven productivity gains represent a potential real economic boost that has no analog in the 1930s. Whether that boost is large enough and fast enough to offset the structural debt pressures is one of the genuine uncertainties of the current period.
+  </p>
+
+  <blockquote>
+    <p>"The investor's job is not to be right about the future. It is to identify conditions where the risk-reward ratio of a particular position is strongly favorable, given a range of plausible outcomes."</p>
+    <cite>— Howard Marks, <a href="https://www.oaktreecapital.com/insights/memo/the-best-of" target="_blank">Mastering the Market Cycle (Oaktree, 2018)</a></cite>
+  </blockquote>
+
+  <h2>The Investment Implication</h2>
+
+  <p>
+    The 1937 parallel does not tell us that a 50% equity decline is coming in 2026 or 2027. Markets are not that deterministic, and anyone claiming that level of precision is wrong about how cycles work.
+  </p>
+
+  <p>
+    What it tells us is this: the conditions that produced the 1937–1938 secondary recession are present today. A policy-supported recovery that has not fully resolved the underlying structural debt issues. Tightening that arrived faster than the economy could absorb. Late-cycle dynamics accumulating in credit, labor, and leading indicators. Geopolitical and trade uncertainty that functions as an additional headwind.
+  </p>
+
+  <p>
+    In that environment, what matters is not predicting the timing of the turn. What matters is being positioned to recognize it quickly when it comes, to have the capital to deploy into it, and to have the psychological framework to act when the environment feels most uncomfortable.
+  </p>
+
+  <p>
+    In 1938, the people who bought were the ones who understood that what felt like the end was actually the beginning of the next cycle. The Long Cycle Compass exists to make that recognition systematic rather than intuitive. The crisis accumulation strategy exists to make the action deliberate rather than reactive.
+  </p>
+
+  <p>
+    History rhymes. The job is to know the song before it plays.
+  </p>
+
+  <div class="sign-off">
+    <p>January 2026</p>
+    <div class="name">Nicholas Janicki</div>
+    <p style="margin-top: 8px; font-size: 13px; color: #7F8C8D;">Long Cycle Capital</p>
+  </div>
+
+  <div class="sources">
+    <h3>Sources &amp; Further Reading</h3>
+    <ol>
+      <li>Federal Reserve, <em>FOMC Minutes, December 9–10, 2025</em>: Three consecutive cuts in 2025, ending at 3.50–3.75%. <a href="https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm" target="_blank">Read →</a></li>
+      <li>Howard Marks, <em>Cockroaches in the Coal Mine</em> (Oaktree Memo, November 2025): Credit carelessness accumulating in late-2025 markets. <a href="https://www.cnbc.com/2025/11/12/veteran-investor-howard-marks-warns-over-credit-carelessness.html" target="_blank">Read →</a></li>
+      <li>Robert Shiller, <em>Irrational Exuberance</em> (3rd ed., 2015): Historical equity valuations and cycle turning points. CAPE ratio data available at <a href="https://shillerdata.com" target="_blank">shillerdata.com →</a></li>
+      <li>Milton Friedman &amp; Anna Schwartz, <em>A Monetary History of the United States</em> (1963): The definitive account of Federal Reserve policy errors in the 1930s, including the 1937 reserve requirement increases. Essential reading on policy-driven cycle amplification.</li>
+      <li>Barry Eichengreen, <em>Hall of Mirrors: The Great Depression, the Great Recession, and the Uses and Misuses of History</em> (2015): A direct comparison of the 1930s and 2008 crisis, with lessons for how policymakers misread historical parallels. <a href="https://global.oup.com/academic/product/hall-of-mirrors-9780190621070" target="_blank">More →</a></li>
+      <li>Ray Dalio, <em>Principles for Navigating Big Debt Crises</em> (2018): Case study on the 1930s US debt cycle and its resolution. <a href="https://www.principles.com/big-debt-crises/" target="_blank">Download free →</a></li>
+    </ol>
+  </div>
+
+  <div class="disclaimer">
+    This essay is for informational purposes only and does not constitute investment advice. Historical comparisons are illustrative of a framework, not predictions. Long Cycle Capital manages proprietary capital only and is not registered as an investment adviser.
+  </div>
+
+</div>
+</body>
+</html>

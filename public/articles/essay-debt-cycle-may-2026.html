@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Long-Term Debt Cycle: Where Are We?</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { background: #FAF9F6; color: #2C3E50; }
+
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: clamp(40px,8vw,80px) clamp(24px,5vw,40px);
+  }
+
+  .letter-meta {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #B8860B;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 32px;
+  }
+  .letter-meta::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: #B8860B;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400; color: #1F4E78;
+    line-height: 1.12; letter-spacing: -0.02em;
+    margin-bottom: 10px; text-wrap: pretty;
+  }
+
+  .meta-row {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; color: #7F8C8D;
+    margin-bottom: 40px;
+  }
+
+  .divider { width: 40px; height: 1px; background: #B8860B; margin-bottom: 40px; }
+
+  p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.85; color: #2C3E50;
+    margin-bottom: 28px; text-wrap: pretty;
+  }
+
+  h2 {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7F8C8D;
+    margin-top: 56px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before {
+    content: ''; display: inline-block;
+    width: 20px; height: 1px; background: #7F8C8D;
+  }
+
+  blockquote {
+    border-left: 3px solid #B8860B;
+    padding: 6px 0 6px 24px;
+    margin: 36px 0;
+  }
+  blockquote p {
+    font-size: clamp(17px, 2vw, 20px);
+    font-style: italic; color: #1F4E78;
+    margin-bottom: 10px; line-height: 1.65;
+  }
+  blockquote cite {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  blockquote a { color: #7F8C8D; text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Cycle position visual */
+  .cycle-bar {
+    background: #F2F0EB;
+    border-top: 2px solid #1F4E78;
+    padding: 28px;
+    margin: 40px 0;
+  }
+  .cycle-bar-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: #7F8C8D; margin-bottom: 20px;
+  }
+  .cycle-track {
+    position: relative;
+    height: 8px;
+    background: linear-gradient(to right, #27AE60 0%, #27AE60 20%, #58D68D 20%, #58D68D 40%, #D4AC0D 40%, #D4AC0D 60%, #CA6F1E 60%, #CA6F1E 80%, #C0392B 80%, #C0392B 100%);
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+  .cycle-marker {
+    position: absolute;
+    top: -6px;
+    transform: translateX(-50%);
+    width: 20px; height: 20px;
+    background: #1F4E78;
+    border: 3px solid #FAF9F6;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .cycle-phases {
+    display: flex;
+    justify-content: space-between;
+    font-family: Arial, sans-serif;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  .cycle-note {
+    margin-top: 16px;
+    font-family: Arial, sans-serif;
+    font-size: 12px; color: #7F8C8D; line-height: 1.65;
+  }
+  .cycle-note strong { color: #1F4E78; }
+
+  /* Stat grid */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: rgba(44,62,80,0.10);
+    margin: 36px 0;
+  }
+  .stat-cell {
+    background: #F2F0EB;
+    padding: 20px 22px;
+  }
+  .stat-cell .val {
+    font-family: Georgia, serif;
+    font-size: 28px; font-weight: 400;
+    color: #1F4E78; line-height: 1; margin-bottom: 6px;
+  }
+  .stat-cell .lbl {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  .stat-cell .ctx {
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D;
+    margin-top: 4px; line-height: 1.5;
+  }
+
+  .callout {
+    background: #F2F0EB;
+    border-left: 3px solid #B8860B;
+    padding: 18px 22px;
+    margin: 32px 0;
+  }
+  .callout p {
+    font-size: 14px; color: #2C3E50; margin-bottom: 0;
+    font-family: Arial, sans-serif; line-height: 1.7;
+  }
+  .callout strong { color: #1F4E78; }
+
+  .sources {
+    margin-top: 64px; padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sources h3 {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: #7F8C8D; margin-bottom: 16px;
+  }
+  .sources ol { padding-left: 20px; }
+  .sources li {
+    font-family: Arial, sans-serif;
+    font-size: 12px; color: #7F8C8D;
+    line-height: 1.7; margin-bottom: 8px;
+  }
+  .sources a { color: #1F4E78; text-decoration: underline; text-underline-offset: 2px; }
+
+  .sign-off {
+    margin-top: 56px; padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sign-off p { font-family: Georgia, serif; font-size: 16px; color: #7F8C8D; margin-bottom: 6px; }
+  .sign-off .name { font-family: Georgia, serif; font-size: 18px; color: #1F4E78; font-style: italic; }
+
+  .disclaimer {
+    margin-top: 32px; padding-top: 24px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D; line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="letter-meta">Quarterly Essay · Long Cycle Capital</div>
+  <h1>The Long-Term Debt Cycle: Where Are We?</h1>
+  <div class="meta-row">May 2026 · 18 min read</div>
+  <div class="divider"></div>
+
+  <p>
+    Most investors think in quarters. Some think in years. A small number think in decades. The long-term debt cycle asks you to think in generations. It is a 75 to 100-year arc, driven by the slow accumulation and eventual painful resolution of debt that cannot be serviced in real terms. Understanding it doesn't tell you what the market will do next week. It tells you what the next 10 years will be shaped by.
+  </p>
+
+  <p>
+    This essay is about where we are in that arc. The short answer: late. The more useful answer is in the pages that follow.
+  </p>
+
+  <h2>The Framework</h2>
+
+  <p>
+    Ray Dalio's work on the long-term debt cycle is the most rigorous public articulation of something that most serious macro investors observe but few systematize. The core mechanism is straightforward: over long periods, economies accumulate debt faster than they generate income to service it. Interest rates fall to accommodate the growing debt load. At some point, rates hit zero and the accommodation runs out. What follows is a structural adjustment that is painful, disruptive, and historically inevitable. <sup>[1]</sup>
+  </p>
+
+  <blockquote>
+    <p>"In the long run, debt crises are inevitable in a system where money can be lent into existence. The question is not whether they will happen, but when and how they will be resolved."</p>
+    <cite>— Ray Dalio, <a href="https://www.principles.com/big-debt-crises/" target="_blank">Principles for Navigating Big Debt Crises (2018)</a></cite>
+  </blockquote>
+
+  <p>
+    Dalio identifies three ways a debt crisis resolves: austerity (painful, slow), default or restructuring (sharp but bounded), and printing money or inflating the debt away (diffuse, often invisible). Most sovereign debt crises resolve through some combination of all three. The mix determines how the adjustment manifests in markets: in bond yields, in currency values, in real asset prices.
+  </p>
+
+  <p>
+    The last time the United States went through a major long-term debt cycle inflection was 1930 to 1933. The resolution involved all three mechanisms: severe austerity, widespread bank and corporate defaults, and eventually dollar devaluation in 1933 when Roosevelt suspended the gold standard and devalued the dollar against gold by roughly 40%. What followed was a long expansionary cycle built on a cleaned-up balance sheet.
+  </p>
+
+  <p>
+    That was roughly 93 years ago.
+  </p>
+
+  <h2>Where the Numbers Are Now</h2>
+
+  <p>
+    The US entered this decade with a debt-to-GDP ratio above 120%. <sup>[2]</sup> Interest costs now consume roughly 15% of federal revenue and rising, a number that gets worse with every refinancing as pre-pandemic low-rate debt rolls into a higher-rate environment. Real interest rates, after being persistently negative from 2008 to 2022, have normalized in positive territory: the 10-year TIPS yield sits around 2%. <sup>[3]</sup>
+  </p>
+
+  <!-- Cycle position bar -->
+  <div class="cycle-bar">
+    <div class="cycle-bar-label">Long-Term Debt Cycle Position — Estimated</div>
+    <div class="cycle-track">
+      <!-- Marker at ~82% through the cycle (late stage, approaching terminal) -->
+      <div class="cycle-marker" style="left: 82%;"></div>
+    </div>
+    <div class="cycle-phases">
+      <span>Early Expansion</span>
+      <span>Mid Cycle</span>
+      <span>Late Cycle</span>
+      <span>Terminal</span>
+    </div>
+    <div class="cycle-note">
+      <strong>Estimated position: Late Cycle, approaching terminal phase.</strong> Based on debt-to-GDP trajectory, real rate level, and structural fiscal dynamics. Estimated inflection window: 2028–2033.
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-cell">
+      <div class="val">~120%</div>
+      <div class="lbl">US Debt / GDP</div>
+      <div class="ctx">Highest since WWII</div>
+    </div>
+    <div class="stat-cell">
+      <div class="val">~15%</div>
+      <div class="lbl">Revenue to Debt Service</div>
+      <div class="ctx">Rising with each refinancing</div>
+    </div>
+    <div class="stat-cell">
+      <div class="val">2.1%</div>
+      <div class="lbl">10yr TIPS Real Yield</div>
+      <div class="ctx">First positive real rates since 2008</div>
+    </div>
+    <div class="stat-cell">
+      <div class="val">93 yrs</div>
+      <div class="lbl">Since Last Major Inflection</div>
+      <div class="ctx">1930–1933 debt crisis</div>
+    </div>
+  </div>
+
+  <p>
+    These numbers don't tell you when the cycle turns. They tell you that the conditions for a terminal phase are accumulating. High debt, rising real rates, and compressed fiscal flexibility are the ingredients of every historical long-term debt cycle peak. They are all present.
+  </p>
+
+  <h2>What "Terminal Phase" Actually Means</h2>
+
+  <p>
+    It is worth being clear about what we mean when we say terminal phase. We do not mean collapse. We mean a period of structural adjustment during which the old debt-fueled growth model stops working, the political and economic institutions built around it come under stress, and a new equilibrium takes years to establish. The 1930s were a terminal phase. They produced genuine suffering. They also produced extraordinary investment opportunities for those positioned correctly.
+  </p>
+
+  <p>
+    The resolution of a terminal long-term debt cycle typically involves several things happening simultaneously: fiscal consolidation (often politically forced), some form of debt restructuring or default at the sovereign or quasi-sovereign level, currency devaluation relative to real assets, and a shift in which assets the capital markets prize most.
+  </p>
+
+  <p>
+    In practice, this has historically meant: government bonds lose real value (through inflation or explicit repricing), real assets outperform (gold, real estate, productive land, hard infrastructure), and currencies of the reserve nation weaken against everything else. It also tends to mean that the reserve currency status itself comes under question, even if it is not ultimately lost.
+  </p>
+
+  <h2>The Reserve Currency Dynamic</h2>
+
+  <p>
+    The US dollar's reserve currency status has been both the enabler of the current debt accumulation and the source of its eventual constraint. Because global trade and finance are denominated in dollars, the US has been able to run persistent deficits and accumulate debt at levels that would have triggered currency crises in any other country. This is what French economist Valéry Giscard d'Estaing called America's "exorbitant privilege" in the 1960s. It is real. It is also finite.
+  </p>
+
+  <p>
+    The privilege erodes slowly and then quickly. The slow erosion is visible now: non-dollar settlement systems expanding, central bank gold accumulation at multi-decade highs, multilateral trade agreements structured to reduce dollar dependency. The quick erosion happens when confidence breaks. We are in the slow phase.
+  </p>
+
+  <blockquote>
+    <p>"Reserve currency status is like trust in a bank: it can erode gradually for years before it collapses suddenly. The gradual erosion is the warning. The collapse is the event."</p>
+    <cite>— Lyn Alden, <a href="https://www.lynalden.com/fiscal-and-monetary-policy/" target="_blank">Fiscal and Monetary Policy Analysis</a></cite>
+  </blockquote>
+
+  <p>
+    The dollar is not losing reserve status in the next two years. The infrastructure for dollar alternatives is not yet built. But the trajectory is visible, and it points in one direction. For an investor with a 5 to 10-year horizon, that trajectory matters more than the current price of any single asset.
+  </p>
+
+  <h2>What History Rhymes With</h2>
+
+  <p>
+    The most useful historical parallels are 1930–1933 (US sovereign debt cycle terminal phase) and 1946–1950 (UK sovereign debt cycle terminal phase). Both involved countries that had accumulated war or depression-era debts beyond serviceable levels. Both resolved through some combination of financial repression, currency devaluation, and restructuring of the implicit social contract around capital.
+  </p>
+
+  <p>
+    The UK parallel is instructive because Britain retained its reserve currency status through the process, losing it only gradually over the following two decades. The adjustment was real but not catastrophic. US GDP per capita continued to grow through the 1930s resolution, though it was deeply uneven in distribution. The lesson is that terminal phases are not extinction events. They are reorganizations.
+  </p>
+
+  <div class="callout">
+    <p><strong>On timing.</strong> The most dangerous phrase in cycle investing is "this time it's different." The second most dangerous is "it has to happen now." Terminal phases can take longer to arrive than any reasonable investor would expect. Our estimated inflection window is 2028–2033, which is not a prediction. It is the range within which the structural pressures described in this essay are most likely to become impossible to defer. We could be wrong by five years in either direction. The positioning strategy is built to be patient enough to absorb that uncertainty.</p>
+  </div>
+
+  <h2>What This Means for Positioning</h2>
+
+  <p>
+    Long Cycle Capital was built around the long-term debt cycle thesis. Each of the four strategies maps directly to what the terminal and post-terminal phases of the cycle favor.
+  </p>
+
+  <p>
+    The currency strategy captures central bank policy divergence. In a terminal phase, divergence between the reserve currency nation and others tends to be extreme and mean-reverting. The setups are large when they come.
+  </p>
+
+  <p>
+    The gold-silver ratio strategy captures the historical relationship between real money and industrial money. In periods of financial stress, gold outperforms silver significantly. In periods of recovery and expansion that follow, silver closes the gap. The setup is in the spread, not in either metal alone.
+  </p>
+
+  <p>
+    The Bitcoin halving cycle strategy captures a digitally-native store of value that has been explicitly designed for a world in which sovereign debt cycles resolve through money printing. The halving cycle's four-year rhythm exists within the larger long-term debt cycle context. The two interact in ways that are still being discovered.
+  </p>
+
+  <p>
+    The crisis accumulation strategy is the most direct expression of the thesis. When the terminal phase arrives, equity and real asset prices will be available at valuations that reflect maximum fear. We will buy. That is the whole plan.
+  </p>
+
+  <p>
+    Right now, none of these strategies are fully active. The Cycle Compass reads Late Cycle at 0.82. Late Cycle says preserve capital and wait. The big setups are ahead. The discipline is in not manufacturing smaller ones to fill the time.
+  </p>
+
+  <div class="sign-off">
+    <p>May 2026</p>
+    <div class="name">Nicholas Janicki</div>
+    <p style="margin-top: 8px; font-size: 13px; color: #7F8C8D;">Long Cycle Capital</p>
+  </div>
+
+  <div class="sources">
+    <h3>Sources &amp; Further Reading</h3>
+    <ol>
+      <li>Ray Dalio, <em>Principles for Navigating Big Debt Crises</em> (Bridgewater, 2018). The definitive public framework for long-term debt cycle analysis. <a href="https://www.principles.com/big-debt-crises/" target="_blank">Download free →</a></li>
+      <li>US Congressional Budget Office, <em>The 2026 Long-Term Budget Outlook</em>. Current US debt-to-GDP trajectory and interest cost projections. <a href="https://www.cbo.gov/topics/budget" target="_blank">CBO Budget Data →</a></li>
+      <li>Federal Reserve, <em>FOMC Projections, September 2025</em>. Real yield and rate path data. <a href="https://www.federalreserve.gov/monetarypolicy/fomcprojtabl20250917.htm" target="_blank">Read →</a></li>
+      <li>Lyn Alden, <em>Broken Money</em> (2023). The best single-volume treatment of the monetary system, reserve currency dynamics, and what comes next. <a href="https://www.lynalden.com/broken-money/" target="_blank">Learn more →</a></li>
+      <li>Russell Napier, <em>Anatomy of the Bear</em> (2005). Four historical examples of bear market bottoms and the structural conditions that produced them. Essential reading on post-crisis accumulation timing.</li>
+      <li>Howard Marks, <em>Mastering the Market Cycle</em> (2018). Chapter on the credit cycle and how debt accumulation creates the conditions for its own reversal. <a href="https://www.oaktreecapital.com/insights/memo/the-best-of" target="_blank">Oaktree memos →</a></li>
+    </ol>
+  </div>
+
+  <div class="disclaimer">
+    This essay is for informational purposes only and does not constitute investment advice. Long Cycle Capital manages proprietary capital only and is not registered as an investment adviser. Views expressed are those of the author based on the cited framework and are subject to change.
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Annual Letter: 2025 Draft</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    background: #FAF9F6;
+    color: #2C3E50;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: clamp(40px,8vw,80px) clamp(24px,5vw,40px);
+  }
+
+  /* Header */
+  .letter-meta {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #B8860B;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .letter-meta::before {
+    content: '';
+    display: inline-block;
+    width: 28px;
+    height: 1px;
+    background: #B8860B;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400;
+    color: #1F4E78;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+    text-wrap: pretty;
+  }
+
+  .tagline {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    font-style: italic;
+    color: #B8860B;
+    margin-bottom: 40px;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: #B8860B;
+    margin-bottom: 40px;
+  }
+
+  /* Body text */
+  p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.85;
+    color: #2C3E50;
+    margin-bottom: 28px;
+    text-wrap: pretty;
+  }
+
+  /* Section headers */
+  h2 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #7F8C8D;
+    margin-top: 56px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2::before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: #7F8C8D;
+  }
+
+  /* Pull quote */
+  blockquote {
+    border-left: 3px solid #B8860B;
+    padding: 6px 0 6px 24px;
+    margin: 36px 0;
+  }
+  blockquote p {
+    font-family: Georgia, serif;
+    font-size: clamp(17px, 2vw, 20px);
+    font-style: italic;
+    color: #1F4E78;
+    margin-bottom: 10px;
+    line-height: 1.65;
+  }
+  blockquote cite {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  blockquote a {
+    color: #7F8C8D;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Stat callout */
+  .stat-callout {
+    background: #F2F0EB;
+    border-top: 2px solid #1F4E78;
+    padding: 24px 28px;
+    margin: 36px 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .stat-callout .stat-val {
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #1F4E78;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-callout .stat-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: #7F8C8D;
+  }
+
+  /* Footnote / source links */
+  .sources {
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sources h3 {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: #7F8C8D;
+    margin-bottom: 16px;
+  }
+  .sources ol {
+    padding-left: 20px;
+  }
+  .sources li {
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    color: #7F8C8D;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .sources a {
+    color: #1F4E78;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Close signature */
+  .sign-off {
+    margin-top: 56px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sign-off p {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    color: #7F8C8D;
+    margin-bottom: 6px;
+  }
+  .sign-off .name {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    color: #1F4E78;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="letter-meta">Annual Letter · Long Cycle Capital</div>
+
+  <h1>2025: A Year of Positioning</h1>
+  <div class="tagline">Patience compounds. So does urgency, when the moment is right.</div>
+  <div class="divider"></div>
+
+  <p>
+    This letter is a record. Not a report to outside investors. We don't have those right now and aren't looking. It's a document written to myself, ten years from now, about what actually happened in 2025 and why the decisions we made were the right ones, even when they looked questionable from the outside.
+  </p>
+
+  <p>
+    2025 was not the year Long Cycle Capital ran a macro portfolio. It was the year I built the seed.
+  </p>
+
+  <h2>The Core Move</h2>
+
+  <p>In 2025, I bought out a previous business partner in True REST, the float therapy franchise company I founded 15 years ago. At the time of purchase, the company carried $16.5 million in brand revenue and had been losing roughly $150,000 a year for three consecutive years. A traditional PE firm would have walked. The numbers looked like a distressed asset with an operator problem, not a growth story.</p>
+
+  <p>
+    That reading was correct, and that's exactly why the opportunity existed.
+  </p>
+
+  <p>When you understand cycles... really understand them, not as a concept but as a lived experience, you see things differently. A company generating $16.5 million in brand royalties that is losing money isn't necessarily broken. It may just be in the wrong phase. The infrastructure is there. The brand is real. What's broken is execution, leadership, or both. Those things are fixable. A broken brand is not.</p>
+
+  <div class="stat-callout">
+    <div>
+      <div class="stat-val">$16.5M</div>
+      <div class="stat-label">Brand revenue at acquisition</div>
+    </div>
+    <div>
+      <div class="stat-val">−$150K</div>
+      <div class="stat-label">Annual loss, 3 years running</div>
+    </div>
+    <div>
+      <div class="stat-val">+$150K</div>
+      <div class="stat-label">Profitable within 12 months</div>
+    </div>
+  </div>
+
+  <p>
+    Within twelve months of taking over, the company was profitable: a $300,000 swing in a single year. The 2026 target is $400,000+ in profit, with unit resales restarting. That's not because of some complicated turnaround strategy. It's because we identified the right phase of the asset's cycle, understood what was actually broken versus what was temporarily depressed, and then executed with speed.
+  </p>
+
+  <h2>On Valuation and the Cycle Logic</h2>
+
+  <p>
+    Howard Marks has a line I keep coming back to: "The safest and most potentially profitable thing is to buy something when no one likes it." <sup>[1]</sup> The acquisition was not popular internally or externally. Nobody was pitching me on taking over a franchise system that had been bleeding cash for three years. That's precisely the point.
+  </p>
+
+  <blockquote>
+    <p>"Good times lead to complacency, risk tolerance, and carelessness... bad times expose the results of that carelessness, as investments entered into without adequate investigation fail to hold up in a hostile environment."</p>
+    <cite>— Howard Marks, <a href="https://www.cnbc.com/2025/11/12/veteran-investor-howard-marks-warns-over-credit-carelessness.html" target="_blank">Oaktree Memo, November 2025</a></cite>
+  </blockquote>
+
+  <p>Marks wrote that in the context of credit markets, warning about the "carelessness" he was seeing accumulate in late-2025 lending. But the same sentence describes every distressed business acquisition I've ever looked at. The operational problems at True REST weren't structural. They were the result of decisions made during a period when the good times made it easy to be careless. When the cycle turned, the carelessness became visible.</p>
+
+  <p>
+    That's not pessimism about the prior management. It's just the cycle. Good operators overshoot in expansion phases. The opportunity is in recognizing when the overshoot has corrected and the underlying asset is sound.
+  </p>
+
+  <h2>Plan A. Only Plan A.</h2>
+
+  <p>
+    Here's the honest part. Getting this deal done was not clean. I contacted investors. I called friends. I leveraged everything I had. There were moments where the uncertainty was genuinely uncomfortable. Not because I doubted the thesis. Execution is always harder than analysis.
+  </p>
+
+  <p>The thing that held the whole thing together was a decision I made early: there was no Plan B. Plan B is a psychological escape hatch. When you let yourself build one, you start negotiating with yourself about when it's acceptable to use it. That negotiation will happen at exactly the wrong moment: when things are hardest, which is usually when you're closest to the turning point.</p>
+
+  <p>Somewhere in the middle of it, an investor asked me directly: "What if this deal doesn't go through? How will you feel?" I told him I was unwilling to have any feelings or thoughts about a Plan B. I was not attached to the outcome and would deal with whatever came. But every ounce of focus and emotional energy I had was on Plan A. Not 95% with a small hedge. All of it.</p>
+
+  <p>
+    I've watched this pattern in markets too. The investors who get shaken out of a position right before the inflection aren't wrong about the thesis. They're wrong about building an exit that felt rational under pressure. The cycle doesn't care about your Plan B.
+  </p>
+
+  <h2>What AI Changed</h2>
+
+  <p>AI made a 3-person team operate like a 9-person one. We started rebuilding the entire True REST franchising software suite from scratch: CRM, POS, marketing automation. That was not a small project. Two years ago it would have taken 18 months and a team three times the size.</p>
+
+  <p>The competitive implication of this is still underappreciated. In 2025, the companies that understood this,  that AI had fundamentally changed the ratio of ambition to resource required, moved fast. The ones that didn't told themselves they'd figure it out next quarter. The gap that's opening between those two groups is going to look enormous by 2028.</p>
+  <h2>What We Watched in Public Markets</h2>
+
+  <p>
+    I want to be clear about 2025's macro environment: it was a year that rewarded complacency, and that's a late-cycle signal worth noting. The Fed cut rates three times, ending the year at 3.50–3.75%. <sup>[2]</sup> Equity prices spent most of the year near record highs. Credit spreads remained historically tight: investment grade at roughly 0.7%, high yield around 2.7%. <sup>[3]</sup> The dollar declined nearly 10% across the year. <sup>[4]</sup>
+  </p>
+
+  <p>
+    None of those numbers scream danger individually. Taken together, they describe a market where investors are pricing very little risk into assets across the board. That's not a prediction of imminent collapse. It's a description of where we are in the cycle. Late, not terminal. But late is precisely when the cost of carelessness starts to accumulate.
+  </p>
+
+  <p>The Cycle Compass has been reading Late Cycle at high confidence for most of this year. That reading shapes how we're sizing risk in everything we touch, including the True REST buildout. It argues for speed in execution but conservatism in leverage.</p>
+
+  <h2>What 2026 Is About</h2>
+
+  <p>The plan for 2026 is simple to describe and hard to execute: get True REST to $400,000+ in annual profit, restart unit resales, rebuild the software suite to a state where it becomes a competitive asset rather than a cost center, and use the cash flow to begin seeding the macro strategies we've been developing.</p>
+
+  <p>
+    The macro strategies themselves aren't changing. We're watching currency pairs for central bank divergence setups, monitoring the gold-silver ratio for multi-year extreme conditions, tracking the post-halving Bitcoin cycle, and keeping our crisis accumulation framework ready. None of these are active right now. That's intentional. The Compass says Late Cycle. Late Cycle says preserve capital and wait.
+  </p>
+
+  <p>
+    Ray Dalio describes the long-term debt cycle as operating over roughly 75–100 year periods. <sup>[5]</sup> The last major inflection was 1930–1933. By that framework, we're in the late innings of a cycle that has roughly 5–10 years left before a significant structural adjustment. Long Cycle Capital was built to position for that adjustment, not to trade noise in the meantime.
+  </p>
+
+  <h2>The Honest Summary</h2>
+
+  <p>
+    2025 was the year of the seed. We took an operating business from loss to profit. We rebuilt its infrastructure. We established that the thesis works in practice, not just in frameworks: cycle-aware, patient capital, applied to real assets.
+  </p>
+
+  <p>
+    The macro portfolio doesn't have much to show yet because the macro didn't offer much worth taking. That's not a failure of conviction. It's the whole point. Marks again: "Long-term investment success is best achieved through a string of consistently good returns and an absence of poor years, not by aiming for brilliant successes." <sup>[6]</sup>
+  </p>
+
+  <p>
+    The brilliant successes are coming. The cycle will provide them. Our job until then is to not be careless.
+  </p>
+
+  <div class="sign-off">
+    <p>January 2026</p>
+    <div class="name">Nicholas Janicki</div>
+    <p style="margin-top: 8px; font-size: 13px; color: #7F8C8D;">Long Cycle Capital</p>
+  </div>
+
+  <div class="sources">
+    <h3>Sources &amp; Further Reading</h3>
+    <ol>
+      <li>Howard Marks, <em>The Lessons of Howard Marks' Memos (1990–1995)</em>: on buying when no one likes an asset. <a href="https://theintellectualedge.substack.com/p/the-lessons-of-howard-marks-memos" target="_blank">Read the analysis →</a></li>
+      <li>Federal Reserve, <em>FOMC Minutes, December 9–10, 2025</em>, three consecutive cuts, ending at 3.50–3.75%. <a href="https://www.federalreserve.gov/monetarypolicy/fomcminutes20251210.htm" target="_blank">Full minutes →</a></li>
+      <li>BlackRock, <em>Fed Rate Cuts &amp; Portfolio Implications</em>, credit spread data, September 2025. <a href="https://www.blackrock.com/us/financial-professionals/insights/fed-rate-cuts-and-potential-portfolio-implications" target="_blank">Read →</a></li>
+      <li>Invesco, <em>Above the Noise: Rethinking 2025 Narratives</em>, USD DXY declined 9.6% in 2025. <a href="https://www.invesco.com/us/en/insights/2025-narratives-fed-ai-rates.html" target="_blank">Read →</a></li>
+      <li>Ray Dalio, <em>Principles for Navigating Big Debt Crises</em> (Bridgewater, 2018), long-term debt cycle framework, 75–100 year periodicity. <a href="https://www.principles.com/big-debt-crises/" target="_blank">Download →</a></li>
+      <li>Howard Marks, <em>The Route to Performance</em>, Oaktree's first memo, October 1990, on consistent returns vs. swinging for the fences. <a href="https://www.oaktreecapital.com/insights/memo/the-best-of" target="_blank">Read the 35-year collection →</a></li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>

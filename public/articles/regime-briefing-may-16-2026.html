@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regime Briefing — May 16, 2026</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { background: #FAF9F6; color: #2C3E50; }
+
+  .wrapper {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: clamp(40px,8vw,80px) clamp(24px,5vw,40px);
+  }
+
+  .letter-meta {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #B8860B;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 32px;
+  }
+  .letter-meta::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: #B8860B;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(26px, 3.5vw, 36px);
+    font-weight: 400; color: #1F4E78;
+    line-height: 1.15; letter-spacing: -0.02em;
+    margin-bottom: 10px; text-wrap: pretty;
+  }
+
+  .meta-row {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; color: #7F8C8D;
+    margin-bottom: 36px;
+  }
+
+  .divider { width: 40px; height: 1px; background: #B8860B; margin-bottom: 36px; }
+
+  /* Regime status banner */
+  .regime-banner {
+    background: #1F4E78;
+    border-radius: 3px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .regime-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: rgba(250,249,246,0.50); margin-bottom: 6px;
+  }
+  .regime-name {
+    font-family: Georgia, serif;
+    font-size: 22px; font-weight: 400;
+    color: #D4AC0D;
+  }
+  .regime-conf {
+    text-align: right;
+  }
+  .regime-conf .val {
+    font-family: Georgia, serif;
+    font-size: 32px; font-weight: 400;
+    color: #D4AC0D; line-height: 1;
+  }
+  .regime-conf .sub {
+    font-family: Arial, sans-serif;
+    font-size: 10px; color: rgba(250,249,246,0.40);
+    margin-top: 4px; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* Body */
+  p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(15px, 1.8vw, 17px);
+    line-height: 1.85; color: #2C3E50;
+    margin-bottom: 24px; text-wrap: pretty;
+  }
+
+  h2 {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7F8C8D;
+    margin-top: 48px; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before {
+    content: ''; display: inline-block;
+    width: 20px; height: 1px; background: #7F8C8D;
+  }
+
+  /* Indicator table */
+  .indicator-table {
+    width: 100%; border-collapse: collapse;
+    margin-bottom: 36px;
+  }
+  .indicator-table th {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #7F8C8D; text-align: left;
+    padding: 0 0 12px 0;
+    border-bottom: 2px solid rgba(44,62,80,0.10);
+  }
+  .indicator-table td {
+    font-family: Arial, sans-serif;
+    font-size: 13px; color: #2C3E50;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(44,62,80,0.08);
+    vertical-align: top;
+  }
+  .indicator-table td.val {
+    font-family: Georgia, serif;
+    font-size: 16px; color: #1F4E78;
+    white-space: nowrap; padding-right: 20px;
+  }
+  .indicator-table td.change {
+    white-space: nowrap; padding-right: 20px;
+  }
+  .status-dot {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  /* Callout box */
+  .callout {
+    background: #F2F0EB;
+    border-left: 3px solid #B8860B;
+    padding: 18px 22px;
+    margin: 32px 0;
+  }
+  .callout p {
+    font-size: 14px; color: #2C3E50; margin-bottom: 0;
+    font-family: Arial, sans-serif; line-height: 1.7;
+  }
+  .callout strong { color: #1F4E78; }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D; line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="letter-meta">Regime Briefing · Long Cycle Capital</div>
+  <h1>Late-Cycle Signals Accumulating</h1>
+  <div class="meta-row">May 16, 2026 · 4 min read</div>
+  <div class="divider"></div>
+
+  <!-- Current regime banner -->
+  <div class="regime-banner">
+    <div>
+      <div class="regime-label">Current Regime</div>
+      <div class="regime-name">Late Cycle</div>
+    </div>
+    <div class="regime-conf">
+      <div class="val">0.82</div>
+      <div class="sub">Confidence Score</div>
+    </div>
+  </div>
+
+  <p>
+    Three Tier 1 indicators moved into or deepened warning territory this week. The regime classification remains Late Cycle. No change to positioning. This briefing documents what moved and why it matters.
+  </p>
+
+  <h2>What Moved This Week</h2>
+
+  <table class="indicator-table">
+    <thead>
+      <tr>
+        <th>Indicator</th>
+        <th>Reading</th>
+        <th>Change</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Yield Curve (2Y–10Y)</td>
+        <td class="val">−0.18%</td>
+        <td class="change" style="color:#CA6F1E;">↓ from −0.14%</td>
+        <td><span class="status-dot"><span class="dot" style="background:#CA6F1E;"></span>WARNING</span></td>
+      </tr>
+      <tr>
+        <td>ISM Manufacturing PMI</td>
+        <td class="val">46.4</td>
+        <td class="change" style="color:#CA6F1E;">↓ from 47.2</td>
+        <td><span class="status-dot"><span class="dot" style="background:#CA6F1E;"></span>WARNING</span></td>
+      </tr>
+      <tr>
+        <td>Initial Jobless Claims (4wk avg)</td>
+        <td class="val">247k</td>
+        <td class="change" style="color:#D4AC0D;">↑ trend confirmed</td>
+        <td><span class="status-dot"><span class="dot" style="background:#D4AC0D;"></span>CAUTION</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Reading the Signals</h2>
+
+  <p>
+    The yield curve inversion deepening to −0.18% matters not as a single data point but as a trend. It has now been inverted for 14 consecutive months. Historically, the lag between sustained inversion and labor market deterioration has been 12 to 18 months. We are inside that window.
+  </p>
+
+  <p>
+    ISM Manufacturing at 46.4 is the third consecutive sub-47 reading. The manufacturing sector has been in contraction for most of the last year. That alone would not move the regime needle much. Combined with a rising claims trend, it suggests the contraction is beginning to spread beyond goods-producing sectors into services and employment.
+  </p>
+
+  <p>
+    The jobless claims trend is the one worth watching most carefully right now. A 4-week average crossing 245k is a historically reliable early signal of labor market softening. We are at 247k. The prior two readings were 241k and 243k. The direction is clear.
+  </p>
+
+  <div class="callout">
+    <p><strong>Framework note.</strong> A single week of data doesn't change a regime classification. Three indicators moving in the same direction in the same week, all of them confirming the existing Late Cycle reading, is exactly what a regime in late innings looks like. The Compass reading stays at 0.82. But the confidence in the direction — toward Contraction — is rising.</p>
+  </div>
+
+  <h2>Positioning Implication</h2>
+
+  <p>
+    No change. Late Cycle says preserve capital and wait. That's the instruction. Not because there's nothing happening, but because acting on late-cycle noise is how you miss the crisis accumulation opportunity when it arrives.
+  </p>
+
+  <p>
+    If claims continue rising through June and ISM stays below 47 for a fourth consecutive month, the Cycle Compass will likely reclassify to Contraction at the next weekly update. That is not a signal to act. It is a signal to get ready to act.
+  </p>
+
+  <p>
+    The assets we want to accumulate in a Contraction and Crisis environment are already identified. The positions are sized. The only variable is timing, and timing is determined by the framework, not by impatience.
+  </p>
+
+  <div class="disclaimer">
+    This briefing is for informational purposes only. It is not investment advice. Long Cycle Capital manages proprietary capital only. Past framework readings are not indicative of future regime classifications or investment outcomes.
+  </div>
+
+</div>
+</body>
+</html>
