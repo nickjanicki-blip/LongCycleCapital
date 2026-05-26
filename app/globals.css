@@ -64,9 +64,21 @@ input, select, textarea { font-family: inherit; }
 /* Gated blur */
 .gated-blur { filter: blur(5px); pointer-events: none; user-select: none; }
 
-/* Home hero responsive height */
-.home-hero { min-height: 100vh; }
-@media (max-width: 768px) { .home-hero { min-height: 80vh; } }
+/* Home hero */
+.home-hero  { min-height: 100vh; }
+.hero-inner { padding: clamp(72px,10vw,108px) clamp(20px,5vw,40px); }
+.hero-eyebrow { margin-bottom: 28px; }
+.hero-tagline { margin-bottom: 36px; }
+.hero-body    { margin-bottom: 48px; }
+@media (max-width: 768px) {
+  .home-hero    { min-height: 100vh; min-height: 100svh; }
+  .hero-inner   { padding-top: 24px; padding-bottom: 20px; }
+  .hero-eyebrow { margin-bottom: 12px; }
+  .hero-tagline { margin-bottom: 14px; }
+  .hero-body    { margin-bottom: 18px; }
+  .stats-row    { margin-top: 20px; padding-top: 18px; }
+  .stat-item    { flex-basis: 80px; margin-right: 16px; padding-right: 0; border-right: none; }
+}
 
 /* Strategy page stats grid */
 .strategy-stats { display: grid; grid-template-columns: repeat(4,1fr); border-bottom: 1px solid rgba(44,62,80,0.10); }
@@ -78,6 +90,23 @@ input, select, textarea { font-family: inherit; }
   .strategy-stat:nth-child(2) { border-right: none; padding-right: 0; }
   .strategy-stat:nth-child(3) { border-top: 1px solid rgba(44,62,80,0.10); padding-left: 0; }
   .strategy-stat:nth-child(4) { border-top: 1px solid rgba(44,62,80,0.10); }
+}
+
+/* Phase cards — desktop grid / mobile carousel */
+.phase-grid    { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1px; background: rgba(44,62,80,0.10); }
+.phase-carousel { display: none; }
+@media (max-width: 768px) {
+  .phase-grid     { display: none; }
+  .phase-carousel { display: block; }
+  .phase-track {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .phase-track::-webkit-scrollbar { display: none; }
+  .phase-slide { flex: 0 0 100%; scroll-snap-align: start; min-width: 0; }
 }
 
 /* Responsive text size classes — use className instead of inline fontSize */
