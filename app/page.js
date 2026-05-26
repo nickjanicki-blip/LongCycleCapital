@@ -12,7 +12,7 @@ const C = {
 
 function HomeHero() {
   return (
-    <section style={{ background: C.navy, minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: 64, position: 'relative', overflow: 'hidden' }}>
+    <section className="home-hero" style={{ background: C.navy, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: 64, position: 'relative', overflow: 'hidden' }}>
       <svg style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', opacity: 0.04, pointerEvents: 'none' }} width="600" height="460" viewBox="0 0 700 500">
         <path d="M 40 340 C 140 80 260 70 380 220 C 500 370 600 360 660 220" fill="none" stroke="#FAF9F6" strokeWidth="60" strokeLinecap="round" />
         <path d="M 40 260 C 100 160 170 150 240 230 C 310 310 380 300 450 210 C 520 120 590 115 640 180" fill="none" stroke="#FAF9F6" strokeWidth="28" strokeLinecap="round" strokeOpacity="0.5" />
