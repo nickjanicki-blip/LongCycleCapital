@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
 import { INDICATOR_DATA } from '@/lib/indicatorData';
@@ -83,7 +83,58 @@ const phaseData = [
   { name: 'Crisis',      color: C.red,        current: false, what: 'Acute stress — liquidity freezing, forced selling across all asset classes, systemic fear. Every asset looks like a liability. Correlations go to 1.', why: 'The opportunity of a generation if you have dry powder and the psychological constitution to act. Every major wealth-building opportunity in history came from someone willing to buy when no one else would.', positioning: 'Execute the accumulation playbook. This is what all the patience was for.' },
 ];
 
+function PhaseCard({ name, color, current, what, why, positioning }) {
+  return (
+    <div style={{ background: current ? C.navy : C.bg, padding: 'clamp(20px,3vw,28px) clamp(16px,2.5vw,22px)', borderTop: `3px solid ${color}`, display: 'flex', flexDirection: 'column', gap: 14, height: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+        <span style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color }}>{name}</span>
+        {current && <span style={{ fontFamily: 'Arial', fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', background: color, color: '#fff', padding: '2px 7px', borderRadius: 2 }}>Current</span>}
+      </div>
+      <p className="t-sm" style={{ fontFamily: 'Arial', color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{what}</p>
+      <div style={{ borderTop: `1px solid ${current ? 'rgba(250,249,246,0.10)' : C.border}`, paddingTop: 14 }}>
+        <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: current ? 'rgba(250,249,246,0.40)' : C.muted, marginBottom: 6 }}>Why it matters</div>
+        <p className="t-sm" style={{ fontFamily: 'Arial', color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{why}</p>
+      </div>
+      <div style={{ borderTop: `1px solid ${current ? 'rgba(250,249,246,0.10)' : C.border}`, paddingTop: 14, marginTop: 'auto' }}>
+        <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color, marginBottom: 6 }}>Positioning</div>
+        <p className="t-sm" style={{ fontFamily: 'Arial', fontStyle: 'italic', color: current ? 'rgba(250,249,246,0.80)' : C.text, lineHeight: 1.65 }}>{positioning}</p>
+      </div>
+    </div>
+  );
+}
+
 function PhaseNarrative() {
+  const currentIdx = phaseData.findIndex(p => p.current);
+  const [activeIdx, setActiveIdx] = useState(currentIdx);
+  const trackRef = useRef(null);
+  const timerRef = useRef(null);
+
+  // Snap to active phase on mount (no animation — instant)
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.scrollLeft = currentIdx * track.offsetWidth;
+  }, []);
+
+  const handleScroll = () => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      const track = trackRef.current;
+      if (!track) return;
+      const idx = Math.round(track.scrollLeft / track.offsetWidth);
+      setActiveIdx(Math.max(0, Math.min(idx, phaseData.length - 1)));
+    }, 60);
+  };
+
+  const goTo = (idx) => {
+    const clamped = (idx + phaseData.length) % phaseData.length;
+    trackRef.current?.scrollTo({ left: clamped * trackRef.current.offsetWidth, behavior: 'smooth' });
+    setActiveIdx(clamped);
+  };
+
+  const prevIdx = (activeIdx - 1 + phaseData.length) % phaseData.length;
+  const nextIdx = (activeIdx + 1) % phaseData.length;
+
   return (
     <section className="section-pad" style={{ background: C.bg, borderTop: `1px solid ${C.border}` }}>
       <div className="page-max">
@@ -91,24 +142,43 @@ function PhaseNarrative() {
           <div style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: C.muted, marginBottom: 10 }}>The Five Phases</div>
           <h2 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(22px,2.5vw,30px)', fontWeight: 400, color: C.navy }}>What each regime means and why it matters</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 1, background: C.border }}>
-          {phaseData.map(({ name, color, current, what, why, positioning }) => (
-            <div key={name} style={{ background: current ? C.navy : C.bg, padding: 'clamp(20px,3vw,28px) clamp(16px,2.5vw,22px)', borderTop: `3px solid ${color}`, display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color }}>{name}</span>
-                {current && <span style={{ fontFamily: 'Arial', fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', background: color, color: '#fff', padding: '2px 7px', borderRadius: 2 }}>Current</span>}
+
+        {/* Desktop: grid — unchanged */}
+        <div className="phase-grid">
+          {phaseData.map(p => <PhaseCard key={p.name} {...p} />)}
+        </div>
+
+        {/* Mobile: swipe carousel */}
+        <div className="phase-carousel">
+          <div ref={trackRef} className="phase-track" onScroll={handleScroll}>
+            {phaseData.map(p => (
+              <div key={p.name} className="phase-slide">
+                <PhaseCard {...p} />
               </div>
-              <p className="t-sm" style={{ fontFamily: 'Arial', color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{what}</p>
-              <div style={{ borderTop: `1px solid ${current ? 'rgba(250,249,246,0.10)' : C.border}`, paddingTop: 14 }}>
-                <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: current ? 'rgba(250,249,246,0.40)' : C.muted, marginBottom: 6 }}>Why it matters</div>
-                <p className="t-sm" style={{ fontFamily: 'Arial', color: current ? 'rgba(250,249,246,0.65)' : C.muted, lineHeight: 1.7, textWrap: 'pretty' }}>{why}</p>
-              </div>
-              <div style={{ borderTop: `1px solid ${current ? 'rgba(250,249,246,0.10)' : C.border}`, paddingTop: 14, marginTop: 'auto' }}>
-                <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color, marginBottom: 6 }}>Positioning</div>
-                <p className="t-sm" style={{ fontFamily: 'Arial', fontStyle: 'italic', color: current ? 'rgba(250,249,246,0.80)' : C.text, lineHeight: 1.65 }}>{positioning}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          {/* Phase-coloured dot indicators */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '18px 0 14px' }}>
+            {phaseData.map((p, i) => (
+              <button key={i} onClick={() => goTo(i)} aria-label={p.name} style={{
+                width: i === activeIdx ? 22 : 8, height: 8, borderRadius: 4,
+                background: i === activeIdx ? p.color : 'rgba(44,62,80,0.15)',
+                border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0,
+                transition: 'width 220ms ease, background 220ms ease',
+              }} />
+            ))}
+          </div>
+
+          {/* Prev / Next navigation */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
+            <button onClick={() => goTo(prevIdx)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[prevIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+              <span style={{ fontSize: 16, lineHeight: 1 }}>←</span> {phaseData[prevIdx].name}
+            </button>
+            <button onClick={() => goTo(nextIdx)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[nextIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+              {phaseData[nextIdx].name} <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
