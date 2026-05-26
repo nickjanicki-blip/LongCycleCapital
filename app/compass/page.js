@@ -103,30 +103,54 @@ function PhaseCard({ name, color, current, what, why, positioning }) {
   );
 }
 
-function PhaseNarrative() {
-  const currentIdx = phaseData.findIndex(p => p.current);
-  const [activeIdx, setActiveIdx] = useState(currentIdx);
-  const [dir, setDir] = useState(0); // 1 = forward, -1 = back
-  const touchStartX = useRef(null);
-  const N = phaseData.length;
+// [Crisis-clone, Recovery, Expansion, Late Cycle, Contraction, Crisis, Recovery-clone]
+// Indices 0 and N+1 are clones; real cards live at display indices 1..N
+const extPhases = [phaseData[phaseData.length - 1], ...phaseData, phaseData[0]];
 
-  const goTo = (rawIdx, direction = 0) => {
-    const idx = (rawIdx + N) % N;
-    setDir(direction);
-    setActiveIdx(idx);
+function PhaseNarrative() {
+  const N = phaseData.length;
+  const currentIdx = phaseData.findIndex(p => p.current);
+  const [activeIdx, setActiveIdx] = useState(currentIdx); // real index 0..N-1
+  const trackRef = useRef(null);
+  const timerRef = useRef(null);
+
+  // Scroll to current phase on mount (no animation)
+  useEffect(() => {
+    const t = trackRef.current;
+    if (t) t.scrollLeft = (currentIdx + 1) * t.offsetWidth;
+  }, []);
+
+  const handleScroll = () => {
+    clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      const t = trackRef.current;
+      if (!t) return;
+      const raw = Math.round(t.scrollLeft / t.offsetWidth);
+      // Hit the leading Crisis-clone → silently teleport to real Crisis
+      if (raw === 0) { t.scrollLeft = N * t.offsetWidth; setActiveIdx(N - 1); return; }
+      // Hit the trailing Recovery-clone → silently teleport to real Recovery
+      if (raw === N + 1) { t.scrollLeft = 1 * t.offsetWidth; setActiveIdx(0); return; }
+      setActiveIdx(raw - 1);
+    }, 100);
   };
 
-  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
-  const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return;
-    const delta = touchStartX.current - e.changedTouches[0].clientX;
-    if (Math.abs(delta) > 40) goTo(activeIdx + (delta > 0 ? 1 : -1), delta > 0 ? 1 : -1);
-    touchStartX.current = null;
+  // Arrow buttons scroll one adjacent slot (wraps through the clone)
+  const scrollAdj = (dir) => {
+    const t = trackRef.current;
+    if (!t) return;
+    const cur = Math.round(t.scrollLeft / t.offsetWidth);
+    t.scrollTo({ left: (cur + dir) * t.offsetWidth, behavior: 'smooth' });
+  };
+
+  // Dot buttons instant-jump to any real card
+  const jumpTo = (realIdx) => {
+    const t = trackRef.current;
+    if (t) t.scrollLeft = (realIdx + 1) * t.offsetWidth;
+    setActiveIdx(realIdx);
   };
 
   const prevIdx = (activeIdx - 1 + N) % N;
   const nextIdx = (activeIdx + 1) % N;
-  const animClass = dir > 0 ? 'phase-in-next' : dir < 0 ? 'phase-in-prev' : '';
 
   return (
     <section className="section-pad" style={{ background: C.bg, borderTop: `1px solid ${C.border}` }}>
@@ -141,17 +165,20 @@ function PhaseNarrative() {
           {phaseData.map(p => <PhaseCard key={p.name} {...p} />)}
         </div>
 
-        {/* Mobile: infinite swipe carousel */}
-        <div className="phase-carousel" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-          {/* Single card, re-keyed on change to trigger animation */}
-          <div key={activeIdx} className={`phase-card-wrap ${animClass}`}>
-            <PhaseCard {...phaseData[activeIdx]} />
+        {/* Mobile: native scroll-snap carousel with infinite loop via clones */}
+        <div className="phase-carousel">
+          <div ref={trackRef} className="phase-track" onScroll={handleScroll}>
+            {extPhases.map((p, i) => (
+              <div key={i} className="phase-slide">
+                <PhaseCard {...p} />
+              </div>
+            ))}
           </div>
 
           {/* Phase-coloured dot indicators */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '18px 0 14px' }}>
             {phaseData.map((p, i) => (
-              <button key={i} onClick={() => goTo(i, i > activeIdx ? 1 : -1)} aria-label={p.name} style={{
+              <button key={i} onClick={() => jumpTo(i)} aria-label={p.name} style={{
                 width: i === activeIdx ? 22 : 8, height: 8, borderRadius: 4,
                 background: i === activeIdx ? p.color : 'rgba(44,62,80,0.15)',
                 border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0,
@@ -160,12 +187,12 @@ function PhaseNarrative() {
             ))}
           </div>
 
-          {/* Prev / Next navigation — always wraps */}
+          {/* Prev / Next — scrolls through the clone, wraps seamlessly */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
-            <button onClick={() => goTo(prevIdx, -1)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[prevIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+            <button onClick={() => scrollAdj(-1)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[prevIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
               <span style={{ fontSize: 16, lineHeight: 1 }}>←</span> {phaseData[prevIdx].name}
             </button>
-            <button onClick={() => goTo(nextIdx, 1)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[nextIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+            <button onClick={() => scrollAdj(1)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[nextIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
               {phaseData[nextIdx].name} <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
             </button>
           </div>
