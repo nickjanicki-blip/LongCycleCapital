@@ -13,7 +13,7 @@ const C = {
 };
 
 /* ── SVG Gauge ─────────────────────────────────────────────── */
-function CycleDial() {
+function CycleDial({ needleAngle = 108 - 0.82 * 36 }) {
   const cx = 250, cy = 256, R = 178, ri = 122;
   const rad = (a) => a * Math.PI / 180;
   const ox = (a) => cx + R * Math.cos(rad(a));
@@ -39,7 +39,6 @@ function CycleDial() {
     { a1: 36,  a2: 0,   color: C.red,         label: 'CRISIS' },
   ];
 
-  const needleAngle = 108 - 0.82 * 36;
   const nLen = 162;
   const nx = (cx + nLen * Math.cos(rad(needleAngle))).toFixed(1);
   const ny = (cy - nLen * Math.sin(rad(needleAngle))).toFixed(1);
@@ -78,7 +77,7 @@ function CycleDial() {
 const phaseData = [
   { name: 'Recovery',    color: C.green,      current: false, what: 'GDP has bottomed, unemployment is peaking, credit beginning to loosen. Central banks are accommodative. Asset prices often still depressed.', why: 'The best risk-adjusted entry points in any cycle. Feels terrible — the prior crisis is still fresh — but this is when the longest-duration assets offer the highest expected returns.', positioning: 'Accumulate. Maximum duration. Highest conviction sizing.' },
   { name: 'Expansion',   color: C.greenLight, current: false, what: 'Growth accelerating, earnings rising, credit readily available, volatility low. The economy feels good. Most investors are fully invested and optimistic.', why: 'This is when risk quietly builds. Valuations stretch, leverage increases across the system, and complacency peaks. The best expansions plant the seeds of the next crisis.', positioning: 'Ride momentum — but tighten stops and begin reducing duration. Know your exit before you need it.' },
-  { name: 'Late Cycle',  color: C.amber,      current: true,  what: 'Growth still positive but decelerating. Yield curve flattening or inverted. Credit spreads widening. Labor market at peak. Leading indicators turning.', why: 'The clock is visible. This phase tends to be shorter than investors expect and ends faster than almost anyone anticipates. Positioning decisions made here matter enormously.', positioning: "Reduce risk. Preserve capital. Identify the crisis opportunities you'll want to execute when the time comes." },
+  { name: 'Late Cycle',  color: C.amber,      current: false, what: 'Growth still positive but decelerating. Yield curve flattening or inverted. Credit spreads widening. Labor market at peak. Leading indicators turning.', why: 'The clock is visible. This phase tends to be shorter than investors expect and ends faster than almost anyone anticipates. Positioning decisions made here matter enormously.', positioning: "Reduce risk. Preserve capital. Identify the crisis opportunities you'll want to execute when the time comes." },
   { name: 'Contraction', color: C.orange,     current: false, what: 'GDP contracting, earnings declining, credit tightening sharply, unemployment rising. Asset prices falling across the board. Correlations approach 1.', why: 'When the damage from Late Cycle overleveraging becomes visible. Also when seeds of the next Recovery are planted — in forced selling and abandoned assets.', positioning: 'Capital preservation first. Begin identifying specific assets for Crisis accumulation. Patience, not action.' },
   { name: 'Crisis',      color: C.red,        current: false, what: 'Acute stress — liquidity freezing, forced selling across all asset classes, systemic fear. Every asset looks like a liability. Correlations go to 1.', why: 'The opportunity of a generation if you have dry powder and the psychological constitution to act. Every major wealth-building opportunity in history came from someone willing to buy when no one else would.', positioning: 'Execute the accumulation playbook. This is what all the patience was for.' },
 ];
@@ -103,13 +102,12 @@ function PhaseCard({ name, color, current, what, why, positioning }) {
   );
 }
 
-// [Crisis-clone, Recovery, Expansion, Late Cycle, Contraction, Crisis, Recovery-clone]
-// Indices 0 and N+1 are clones; real cards live at display indices 1..N
-const extPhases = [phaseData[phaseData.length - 1], ...phaseData, phaseData[0]];
-
-function PhaseNarrative() {
+function PhaseNarrative({ currentPhaseIdx = 2 }) {
   const N = phaseData.length;
-  const currentIdx = phaseData.findIndex(p => p.current);
+  const currentIdx = currentPhaseIdx;
+  // Inject current flag dynamically; build extended array for infinite loop
+  const phasesWithCurrent = phaseData.map((p, i) => ({ ...p, current: i === currentIdx }));
+  const extPhases = [phasesWithCurrent[N - 1], ...phasesWithCurrent, phasesWithCurrent[0]];
   const [activeIdx, setActiveIdx] = useState(currentIdx); // real index 0..N-1
   const trackRef = useRef(null);
   const timerRef = useRef(null);
@@ -162,7 +160,7 @@ function PhaseNarrative() {
 
         {/* Desktop: grid — unchanged */}
         <div className="phase-grid">
-          {phaseData.map(p => <PhaseCard key={p.name} {...p} />)}
+          {phasesWithCurrent.map(p => <PhaseCard key={p.name} {...p} />)}
         </div>
 
         {/* Mobile: native scroll-snap carousel with infinite loop via clones */}
@@ -177,7 +175,7 @@ function PhaseNarrative() {
 
           {/* Phase-coloured dot indicators */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '18px 0 14px' }}>
-            {phaseData.map((p, i) => (
+            {phasesWithCurrent.map((p, i) => (
               <button key={i} onClick={() => jumpTo(i)} aria-label={p.name} style={{
                 width: i === activeIdx ? 22 : 8, height: 8, borderRadius: 4,
                 background: i === activeIdx ? p.color : 'rgba(44,62,80,0.15)',
@@ -321,7 +319,7 @@ const gatedRows = [
   ['USD DXY', '104.8', 'Approaching multi-year extreme', 'CAUTION'],
 ];
 
-function GatedContent({ onRowClick }) {
+function GatedContent({ rows = gatedRows, onRowClick }) {
   const statusColor = { OK: C.green, CAUTION: C.amber, WARNING: C.orange, ALERT: C.red };
   return (
     <table className="t-sm" style={{ width: '100%', borderCollapse: 'collapse', fontFamily: 'Arial' }}>
@@ -333,7 +331,7 @@ function GatedContent({ onRowClick }) {
         </tr>
       </thead>
       <tbody>
-        {gatedRows.map(([name, val, ctx, st], i) => (
+        {rows.map(([name, val, ctx, st], i) => (
           <tr key={i}
             onClick={() => onRowClick && onRowClick(name, val, st)}
             style={{ borderBottom: `1px solid ${C.border}`, cursor: onRowClick ? 'pointer' : 'default' }}
@@ -355,16 +353,49 @@ function GatedContent({ onRowClick }) {
   );
 }
 
-const tier1Indicators = [
-  { name: 'Yield Curve (2Y–10Y)', value: '−0.14%', reading: 'Inverted', status: 'WARNING' },
-  { name: 'ISM Manufacturing PMI', value: '47.2', reading: 'Contraction zone', status: 'WARNING' },
-  { name: 'Unemployment Claims', value: '+3.2%', reading: 'YoY, rising trend', status: 'CAUTION' },
-  { name: 'CPI Year-over-Year', value: '3.8%', reading: 'Above 2% target', status: 'CAUTION' },
+// Hardcoded fallbacks shown until live data loads
+const FALLBACK_T1 = [
+  { name: 'Yield Curve (2Y–10Y)', value: '−0.14%', reading: 'Inverted',          status: 'WARNING' },
+  { name: 'ISM Manufacturing PMI', value: '47.2',   reading: 'Contraction zone',  status: 'WARNING' },
+  { name: 'Unemployment Claims',   value: '247k',   reading: 'Rising trend',      status: 'CAUTION' },
+  { name: 'CPI Year-over-Year',    value: '3.8%',   reading: 'Above 2% target',   status: 'CAUTION' },
 ];
 
 export default function CompassPage() {
   const { isAuthenticated } = useAuth();
   const [drawer, setDrawer] = useState(null);
+
+  // Live data state — initialised to hardcoded fallbacks
+  const [livePhase,      setLivePhase]      = useState('Late Cycle');
+  const [livePhaseIdx,   setLivePhaseIdx]   = useState(2);
+  const [liveConfidence, setLiveConfidence] = useState(0.82);
+  const [liveNeedle,     setLiveNeedle]     = useState(+(108 - 0.82 * 36).toFixed(1));
+  const [liveUpdated,    setLiveUpdated]    = useState('May 24, 2026');
+  const [tier1Indicators, setTier1]        = useState(FALLBACK_T1);
+  const [liveGatedRows,   setGatedRows]    = useState(gatedRows);
+
+  useEffect(() => {
+    fetch('/api/compass')
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d?.live) return;
+        setLivePhase(d.phase);
+        setLivePhaseIdx(d.phaseIdx);
+        setLiveConfidence(d.confidence);
+        setLiveNeedle(d.needleAngle);
+        const dt = new Date(d.updatedAt);
+        setLiveUpdated(dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
+        // Merge live values; keep name as key to preserve drawer links
+        setTier1(prev => prev.map(ind => {
+          const live = d.tier1.find(x => x.name === ind.name);
+          return live?.value ? { ...ind, value: live.value, reading: live.reading, status: live.status } : ind;
+        }));
+        setGatedRows(d.tier2.map(row =>
+          row.map(cell => cell ?? '—')
+        ));
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div>
@@ -385,7 +416,7 @@ export default function CompassPage() {
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
             <div>
               <h1 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(32px,4vw,52px)', fontWeight: 400, color: C.bg, lineHeight: 1.1, marginBottom: 16 }}>
-                Current Regime: <span style={{ color: C.amber }}>Late Cycle</span>
+                Current Regime: <span style={{ color: C.amber }}>{livePhase}</span>
               </h1>
               <p style={{ fontFamily: 'Arial', fontSize: 15, color: 'rgba(250,249,246,0.60)', lineHeight: 1.65, maxWidth: 480 }}>
                 Our market regime classification engine synthesizes macro, credit, momentum, and sentiment indicators into a single cycle reading.
@@ -393,8 +424,8 @@ export default function CompassPage() {
             </div>
             <div style={{ background: 'rgba(250,249,246,0.06)', border: '1px solid rgba(250,249,246,0.12)', borderRadius: 4, padding: '20px 28px', textAlign: 'center', flexShrink: 0 }}>
               <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(250,249,246,0.45)', marginBottom: 10 }}>Confidence</div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 36, fontWeight: 400, color: C.amber, lineHeight: 1 }}>0.82</div>
-              <div style={{ fontFamily: 'Arial', fontSize: 10, color: 'rgba(250,249,246,0.35)', marginTop: 8 }}>Updated May 24, 2026</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 36, fontWeight: 400, color: C.amber, lineHeight: 1 }}>{liveConfidence.toFixed(2)}</div>
+              <div style={{ fontFamily: 'Arial', fontSize: 10, color: 'rgba(250,249,246,0.35)', marginTop: 8 }}>Updated {liveUpdated}</div>
             </div>
           </div>
         </div>
@@ -404,7 +435,7 @@ export default function CompassPage() {
       <section style={{ background: C.bgSubtle, padding: 'clamp(40px,6vw,64px) 0' }}>
         <div className="page-max">
           <div style={{ maxWidth: 560, margin: '0 auto' }}>
-            <CycleDial />
+            <CycleDial needleAngle={liveNeedle} />
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 24, flexWrap: 'wrap' }}>
               {[['RECOVERY', C.green], ['EXPANSION', C.greenLight], ['LATE CYCLE', C.amber], ['CONTRACTION', C.orange], ['CRISIS', C.red]].map(([label, color]) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -417,7 +448,7 @@ export default function CompassPage() {
         </div>
       </section>
 
-      <PhaseNarrative />
+      <PhaseNarrative currentPhaseIdx={livePhaseIdx} />
 
       {/* Tier 1 indicators */}
       <section className="section-pad" style={{ background: C.bg }}>
@@ -452,7 +483,7 @@ export default function CompassPage() {
                   <h2 style={{ fontFamily: "Georgia,serif", fontSize: 28, fontWeight: 400, color: C.navy }}>Extended indicator set &amp; composite scores</h2>
                 </div>
               )}
-              <GatedContent onRowClick={(name, val, st) => setDrawer({ name, value: val, status: st })} />
+              <GatedContent rows={liveGatedRows} onRowClick={(name, val, st) => setDrawer({ name, value: val, status: st })} />
             </div>
 
             {!isAuthenticated && (
