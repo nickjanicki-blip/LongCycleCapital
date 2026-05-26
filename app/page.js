@@ -18,8 +18,8 @@ function HomeHero() {
         <path d="M 40 260 C 100 160 170 150 240 230 C 310 310 380 300 450 210 C 520 120 590 115 640 180" fill="none" stroke="#FAF9F6" strokeWidth="28" strokeLinecap="round" strokeOpacity="0.5" />
       </svg>
 
-      <div className="page-max" style={{ padding: 'clamp(72px,10vw,108px) clamp(20px,5vw,40px)' }}>
-        <div style={{ fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.gold, marginBottom: 28, display: 'flex', alignItems: 'center', gap: 10 }}>
+      <div className="page-max hero-inner">
+        <div className="hero-eyebrow" style={{ fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.gold, display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ width: 28, height: 1, background: C.gold, display: 'inline-block' }} />
           A public experiment in long-cycle macro investing
         </div>
@@ -28,11 +28,11 @@ function HomeHero() {
           We trade cycles.<br />Not noise.
         </h1>
 
-        <div style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(18px,2.2vw,24px)', fontStyle: 'italic', color: C.gold, marginBottom: 36 }}>
+        <div className="hero-tagline" style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(18px,2.2vw,24px)', fontStyle: 'italic', color: C.gold }}>
           Patience compounds.
         </div>
 
-        <p style={{ fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 'clamp(15px,1.6vw,17px)', lineHeight: 1.75, color: 'rgba(250,249,246,0.72)', maxWidth: 520, marginBottom: 48, textWrap: 'pretty' }}>
+        <p className="hero-body" style={{ fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 'clamp(15px,1.6vw,17px)', lineHeight: 1.75, color: 'rgba(250,249,246,0.72)', maxWidth: 520, textWrap: 'pretty' }}>
           Long Cycle Capital is a self-managed fund exploring cycle-based macro investing. We publicly document our framework, our market analysis, and our thinking. We are not accepting outside capital at this time.
         </p>
 
@@ -130,7 +130,7 @@ function HomeResearchPreview() {
 
   const essays = [
     { type: 'Quarterly Essay', date: 'May 2026', title: 'The Long-Term Debt Cycle: Where Are We?', excerpt: 'Understanding the structural forces driving the current macro regime — and what history suggests comes next.', slug: 'essay-debt-cycle-2026' },
-    { type: 'Regime Briefing', date: 'May 16, 2026', title: 'Late-Cycle Signals Accumulating', excerpt: 'Three indicators flashed this week. Current regime: LATE CYCLE at 0.82 confidence.', locked: true, slug: 'regime-briefing-may-2026' },
+    { type: 'Regime Briefing', date: 'May 16, 2026', title: 'Late-Cycle Signals Accumulating', excerpt: 'Three indicators flashed this week. Cycle Compass: LATE CYCLE with high confidence.', locked: true, slug: 'regime-briefing-may-2026' },
     { type: 'Quarterly Essay', date: 'April 2026', title: 'History Rhymes: 1937 and 2026', excerpt: 'The structural parallels between the current environment and 1937 are striking — and instructive.', slug: 'essay-1937-2026' },
   ];
 
@@ -150,39 +150,40 @@ function HomeResearchPreview() {
           </Link>
         </div>
 
-        {essays.map((e, i) => (
-          <div key={i} className="research-row"
-            onClick={() => e.locked && !isObserver ? setShowModal(true) : null}
-            style={{ opacity: e.locked && !isObserver ? 0.72 : 1, cursor: e.locked && !isObserver ? 'pointer' : 'default' }}>
-            <div>
-              <div style={{ display: 'inline-block', fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: typeColor[e.type] || C.muted, padding: '3px 8px', background: `${typeColor[e.type] || C.muted}18`, borderRadius: 2, marginBottom: 8 }}>{e.type}</div>
-              <div style={{ fontFamily: "'Courier New',monospace", fontSize: 11, color: C.muted }}>{e.date}</div>
+        {essays.map((e, i) => {
+          const locked = e.locked && !isObserver;
+          const rowContent = (
+            <>
+              <div>
+                <div style={{ display: 'inline-block', fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.07em', textTransform: 'uppercase', color: typeColor[e.type] || C.muted, padding: '3px 8px', background: `${typeColor[e.type] || C.muted}18`, borderRadius: 2, marginBottom: 8 }}>{e.type}</div>
+                <div style={{ fontFamily: "'Courier New',monospace", fontSize: 11, color: C.muted }}>{e.date}</div>
+              </div>
+              <div>
+                <h3 style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 400, color: C.navy, marginBottom: 8, lineHeight: 1.3 }}>{e.title}</h3>
+                <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
+              </div>
+              <div className="read-time" style={{ textAlign: 'right', paddingTop: 4, flexShrink: 0 }}>
+                {locked ? (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.gold, border: '1px solid ' + C.gold, padding: '3px 8px', borderRadius: 2, whiteSpace: 'nowrap' }}>
+                    <svg width="8" height="9" viewBox="0 0 10 12"><rect x="1" y="5" width="8" height="7" rx="1" fill="currentColor" /><path d="M3 5V3.5a2 2 0 0 1 4 0V5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                    Observer&apos;s Only
+                  </span>
+                ) : (
+                  <span className="read-time-plain" style={{ fontFamily: 'Arial', fontSize: 11, color: C.muted }}>→</span>
+                )}
+              </div>
+            </>
+          );
+          return locked ? (
+            <div key={i} className="research-row" onClick={() => setShowModal(true)} style={{ opacity: 0.72 }}>
+              {rowContent}
             </div>
-            <div>
-              {e.locked && !isObserver ? (
-                <>
-                  <h3 style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 400, color: C.navy, marginBottom: 8, lineHeight: 1.3 }}>{e.title}</h3>
-                  <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
-                </>
-              ) : (
-                <Link href={`/research/${e.slug}`} style={{ textDecoration: 'none' }}>
-                  <h3 style={{ fontFamily: "Georgia,serif", fontSize: 20, fontWeight: 400, color: C.navy, marginBottom: 8, lineHeight: 1.3 }}>{e.title}</h3>
-                  <p className="t-sm" style={{ fontFamily: 'Arial', color: C.muted, lineHeight: 1.65 }}>{e.excerpt}</p>
-                </Link>
-              )}
-            </div>
-            <div className="read-time" style={{ textAlign: 'right', paddingTop: 4, flexShrink: 0 }}>
-              {e.locked && !isObserver ? (
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: C.gold, border: '1px solid ' + C.gold, padding: '3px 8px', borderRadius: 2, whiteSpace: 'nowrap' }}>
-                  <svg width="8" height="9" viewBox="0 0 10 12"><rect x="1" y="5" width="8" height="7" rx="1" fill="currentColor" /><path d="M3 5V3.5a2 2 0 0 1 4 0V5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
-                  Observer&apos;s Only
-                </span>
-              ) : (
-                <span className="read-time-plain" style={{ fontFamily: 'Arial', fontSize: 11, color: C.muted }}>→</span>
-              )}
-            </div>
-          </div>
-        ))}
+          ) : (
+            <Link key={i} href={`/research/${e.slug}`} className="research-row" style={{ display: 'grid', gridTemplateColumns: '140px 1fr auto', gap: 32, padding: '32px 0', borderTop: `1px solid ${C.border}`, textDecoration: 'none' }}>
+              {rowContent}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
