@@ -92,18 +92,23 @@ input, select, textarea { font-family: inherit; }
   .strategy-stat:nth-child(4) { border-top: 1px solid rgba(44,62,80,0.10); }
 }
 
-/* Phase cards — desktop grid / mobile carousel */
+/* Phase cards — desktop grid / mobile scroll-snap carousel */
 .phase-grid     { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1px; background: rgba(44,62,80,0.10); }
 .phase-carousel { display: none; }
 @media (max-width: 768px) {
-  .phase-grid      { display: none; }
-  .phase-carousel  { display: block; }
-  .phase-card-wrap { overflow: hidden; }
+  .phase-grid     { display: none; }
+  .phase-carousel { display: block; }
+  .phase-track {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;   /* stops page from catching horizontal swipes */
+    scrollbar-width: none;
+  }
+  .phase-track::-webkit-scrollbar { display: none; }
+  .phase-slide { flex: 0 0 100%; scroll-snap-align: start; min-width: 0; }
 }
-@keyframes phase-from-right { from { opacity: 0.2; transform: translateX(48px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes phase-from-left  { from { opacity: 0.2; transform: translateX(-48px); } to { opacity: 1; transform: translateX(0); } }
-.phase-in-next { animation: phase-from-right 220ms ease; }
-.phase-in-prev { animation: phase-from-left  220ms ease; }
 
 /* Responsive text size classes — use className instead of inline fontSize */
 .t-label { font-size: 10px; }
