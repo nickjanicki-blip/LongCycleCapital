@@ -48,7 +48,7 @@ export default function Header() {
 
   const isHeroPage = pathname === '/';
   const isDark = isHeroPage && !scrolled && !menuOpen;
-  const logoColor = isDark ? C.bg : C.navy;
+  const logoColor = (isDark || menuOpen) ? C.bg : C.navy;
   const barColor = menuOpen ? C.bg : (isDark ? C.bg : C.navy);
   const headerBg = menuOpen ? C.navy : isDark ? 'transparent' : C.bg;
 
@@ -113,7 +113,7 @@ export default function Header() {
       <div style={{
         position: 'fixed', top: 64, left: 0, right: 0, bottom: 0,
         zIndex: 199, background: C.navy,
-        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
         padding: 'clamp(32px,8vw,64px)',
         opacity: menuOpen ? 1 : 0,
         pointerEvents: menuOpen ? 'all' : 'none',
@@ -133,7 +133,7 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-        <div style={{ marginTop: 40, fontFamily: "Georgia,serif", fontSize: 15, fontStyle: 'italic', color: C.goldBright, opacity: 0.75 }}>
+        <div style={{ marginTop: 'auto', paddingTop: 40, fontFamily: "Georgia,serif", fontSize: 15, fontStyle: 'italic', color: C.goldBright, opacity: 0.75 }}>
           Patience compounds.
         </div>
       </div>
