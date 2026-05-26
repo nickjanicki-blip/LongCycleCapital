@@ -36,10 +36,10 @@ export default function StrategyPage() {
 
       <section style={{ background: C.bgSubtle }}>
         <div className="page-max">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', borderBottom: `1px solid ${C.border}` }}>
+          <div className="strategy-stats">
             {stats.map((s, i) => (
-              <div key={i} style={{ padding: 'clamp(24px,4vw,36px) 0', borderRight: i < 3 ? `1px solid ${C.border}` : 'none', paddingRight: i < 3 ? 28 : 0, paddingLeft: i > 0 ? 28 : 0 }}>
-                <div style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(28px,3.5vw,40px)', fontWeight: 400, color: C.navy, lineHeight: 1, marginBottom: 6 }}>{s.n}</div>
+              <div key={i} className="strategy-stat">
+                <div style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(28px,3.5vw,40px)', fontWeight: 400, color: C.navy, lineHeight: 1, marginBottom: 6, whiteSpace: 'nowrap' }}>{s.n}</div>
                 <div style={{ fontFamily: 'Arial', fontSize: 11, letterSpacing: '0.07em', textTransform: 'uppercase', color: C.muted }}>{s.label}</div>
               </div>
             ))}
