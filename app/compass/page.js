@@ -106,34 +106,27 @@ function PhaseCard({ name, color, current, what, why, positioning }) {
 function PhaseNarrative() {
   const currentIdx = phaseData.findIndex(p => p.current);
   const [activeIdx, setActiveIdx] = useState(currentIdx);
-  const trackRef = useRef(null);
-  const timerRef = useRef(null);
+  const [dir, setDir] = useState(0); // 1 = forward, -1 = back
+  const touchStartX = useRef(null);
+  const N = phaseData.length;
 
-  // Snap to active phase on mount (no animation — instant)
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    track.scrollLeft = currentIdx * track.offsetWidth;
-  }, []);
-
-  const handleScroll = () => {
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      const track = trackRef.current;
-      if (!track) return;
-      const idx = Math.round(track.scrollLeft / track.offsetWidth);
-      setActiveIdx(Math.max(0, Math.min(idx, phaseData.length - 1)));
-    }, 60);
+  const goTo = (rawIdx, direction = 0) => {
+    const idx = (rawIdx + N) % N;
+    setDir(direction);
+    setActiveIdx(idx);
   };
 
-  const goTo = (idx) => {
-    const clamped = (idx + phaseData.length) % phaseData.length;
-    trackRef.current?.scrollTo({ left: clamped * trackRef.current.offsetWidth, behavior: 'smooth' });
-    setActiveIdx(clamped);
+  const handleTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; };
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 40) goTo(activeIdx + (delta > 0 ? 1 : -1), delta > 0 ? 1 : -1);
+    touchStartX.current = null;
   };
 
-  const prevIdx = (activeIdx - 1 + phaseData.length) % phaseData.length;
-  const nextIdx = (activeIdx + 1) % phaseData.length;
+  const prevIdx = (activeIdx - 1 + N) % N;
+  const nextIdx = (activeIdx + 1) % N;
+  const animClass = dir > 0 ? 'phase-in-next' : dir < 0 ? 'phase-in-prev' : '';
 
   return (
     <section className="section-pad" style={{ background: C.bg, borderTop: `1px solid ${C.border}` }}>
@@ -148,20 +141,17 @@ function PhaseNarrative() {
           {phaseData.map(p => <PhaseCard key={p.name} {...p} />)}
         </div>
 
-        {/* Mobile: swipe carousel */}
-        <div className="phase-carousel">
-          <div ref={trackRef} className="phase-track" onScroll={handleScroll}>
-            {phaseData.map(p => (
-              <div key={p.name} className="phase-slide">
-                <PhaseCard {...p} />
-              </div>
-            ))}
+        {/* Mobile: infinite swipe carousel */}
+        <div className="phase-carousel" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+          {/* Single card, re-keyed on change to trigger animation */}
+          <div key={activeIdx} className={`phase-card-wrap ${animClass}`}>
+            <PhaseCard {...phaseData[activeIdx]} />
           </div>
 
           {/* Phase-coloured dot indicators */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '18px 0 14px' }}>
             {phaseData.map((p, i) => (
-              <button key={i} onClick={() => goTo(i)} aria-label={p.name} style={{
+              <button key={i} onClick={() => goTo(i, i > activeIdx ? 1 : -1)} aria-label={p.name} style={{
                 width: i === activeIdx ? 22 : 8, height: 8, borderRadius: 4,
                 background: i === activeIdx ? p.color : 'rgba(44,62,80,0.15)',
                 border: 'none', cursor: 'pointer', padding: 0, flexShrink: 0,
@@ -170,12 +160,12 @@ function PhaseNarrative() {
             ))}
           </div>
 
-          {/* Prev / Next navigation */}
+          {/* Prev / Next navigation — always wraps */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
-            <button onClick={() => goTo(prevIdx)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[prevIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+            <button onClick={() => goTo(prevIdx, -1)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[prevIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
               <span style={{ fontSize: 16, lineHeight: 1 }}>←</span> {phaseData[prevIdx].name}
             </button>
-            <button onClick={() => goTo(nextIdx)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[nextIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
+            <button onClick={() => goTo(nextIdx, 1)} style={{ fontFamily: 'Arial', fontSize: 11, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: phaseData[nextIdx].color, background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, padding: '4px 0' }}>
               {phaseData[nextIdx].name} <span style={{ fontSize: 16, lineHeight: 1 }}>→</span>
             </button>
           </div>
