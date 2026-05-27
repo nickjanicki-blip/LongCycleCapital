@@ -122,8 +122,27 @@ function composite(statusMap) {
 }
 
 /* ── Main handler ──────────────────────────────────────────── */
-export async function GET() {
+export async function GET(request) {
   if (!FRED_KEY) return NextResponse.json({ live: false });
+
+  // Temporary diagnostic — hit /api/compass?debug=1 to inspect FRED directly
+  const dbg = new URL(request.url).searchParams.get('debug');
+  if (dbg === '1') {
+    const url = `${FRED_BASE}?series_id=T10Y2Y&api_key=${FRED_KEY}&file_type=json&sort_order=desc&limit=1`;
+    try {
+      const r = await fetch(url, { cache: 'no-store' });
+      const body = await r.text();
+      return NextResponse.json({
+        keyLength: FRED_KEY.length,
+        keyHasWhitespace: /\s/.test(FRED_KEY),
+        keyPreview: FRED_KEY.slice(0, 3) + '…' + FRED_KEY.slice(-3),
+        httpStatus: r.status,
+        fredBody: body.slice(0, 600),
+      });
+    } catch (e) {
+      return NextResponse.json({ fetchError: String(e) });
+    }
+  }
 
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, ismObs,
