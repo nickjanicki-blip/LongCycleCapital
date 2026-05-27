@@ -368,6 +368,92 @@ function GatedContent({ rows = gatedRows, onRowClick }) {
   );
 }
 
+/* ── Dynamic Regime Blurb ─────────────────────────────────── */
+function generateRegimeBlurb(phase, confidence, indicators) {
+  const band = confidence >= 0.75 ? 'high' : confidence >= 0.60 ? 'mid' : 'low';
+  const c = confidence.toFixed(2);
+
+  const leads = {
+    'Recovery': {
+      high: 'Distress is clearing. Credit is beginning to loosen and early expansion signals are forming across the model.',
+      mid:  'Early signs of stabilization are present, though confirmation is still building across the full indicator set.',
+      low:  'A tentative Recovery signal. Indicators are stabilizing but not yet aligned.',
+    },
+    'Expansion': {
+      high: 'Growth is broad-based, the labor market is firm, and credit conditions remain supportive.',
+      mid:  `Growth is broadening and the labor market is solid. At ${c}, the reading carries moderate conviction.`,
+      low:  'Growth signals are present but mixed. Low conviction suggests treating this as transitional until indicators align.',
+    },
+    'Late Cycle': {
+      high: 'Leading indicators are turning, credit is tightening, and the yield curve is signaling ahead. The clock is visible.',
+      mid:  'Deterioration is building across Tier 1 indicators. The transition is underway at moderate conviction.',
+      low:  'Indicators are drifting toward Late Cycle but remain mixed. Watch the yield curve and claims for confirmation.',
+    },
+    'Contraction': {
+      high: 'GDP is contracting and credit is tightening sharply. Depth and duration are the open questions.',
+      mid:  'Contraction signals are dominant across the model. The damage is visible, though full breadth is not yet confirmed.',
+      low:  'Contraction is the leading read at low conviction. The model is transitional.',
+    },
+    'Crisis': {
+      high: 'Acute systemic stress. Credit is seizing and forced selling is active. The accumulation window is open.',
+      mid:  'Systemic stress signals are dominant. Dry powder and psychological constitution are the key assets now.',
+      low:  'Crisis-level readings are emerging but not yet confirmed across the full indicator set.',
+    },
+  };
+
+  const signals = {
+    'Yield Curve (2Y–10Y)': {
+      ALERT:   'The yield curve is deeply inverted, a signal that has preceded every US recession in 50 years.',
+      WARNING: 'The yield curve remains inverted. Duration of inversion now matters more than depth.',
+      CAUTION: 'The yield curve is flattening toward the zero line. Watch for inversion.',
+      OK:      'The yield curve has returned to positive slope, a healthy expansionary signal.',
+    },
+    'ISM Manufacturing PMI': {
+      ALERT:   'Manufacturing PMI is in deep contraction, spreading weakness into the broader economy.',
+      WARNING: 'Manufacturing PMI is in contraction territory, signaling deteriorating industrial conditions.',
+      CAUTION: 'Manufacturing PMI is slowing. Still expanding, but momentum is fading.',
+      OK:      'Manufacturing PMI is in solid expansion, confirming the growth reading.',
+    },
+    'Unemployment Claims': {
+      ALERT:   'Initial jobless claims are rising sharply. The labor market is softening.',
+      WARNING: 'Jobless claims are trending higher, a leading signal of broader unemployment deterioration.',
+      CAUTION: 'Jobless claims are in the normal range but trending upward. Watch for sustained deterioration.',
+      OK:      'Jobless claims remain historically low, with the labor market confirming the expansion.',
+    },
+    'CPI Year-over-Year': {
+      ALERT:   'Inflation is running well above target, constraining Fed easing and keeping real rates elevated.',
+      WARNING: "Inflation remains materially above the Fed's 2% target, a headwind to rate cuts and growth.",
+      CAUTION: 'Inflation is above target but moderating. The Fed remains cautious on easing.',
+      OK:      "Inflation is at or near the Fed's 2% target, giving policy room to remain accommodative.",
+    },
+  };
+
+  const postures = {
+    'Recovery':    'The best risk-adjusted entries of the cycle are forming now.',
+    'Expansion':   'Participate selectively and know your exit before you need it.',
+    'Late Cycle':  'Preserve capital and wait. The bigger setups are being built.',
+    'Contraction': 'Capital preservation first. Patience, not action.',
+    'Crisis':      'This is what the patience was for. Execute the accumulation playbook.',
+  };
+
+  // Pick worst Tier 1 indicator; break ties by priority order
+  const statusRank = { ALERT: 3, WARNING: 2, CAUTION: 1, OK: 0 };
+  const priority   = ['Yield Curve (2Y–10Y)', 'Unemployment Claims', 'CPI Year-over-Year', 'ISM Manufacturing PMI'];
+  let worst = null;
+  for (const ind of indicators) {
+    const rank = statusRank[ind.status] ?? 0;
+    const wRank = statusRank[worst?.status] ?? -1;
+    const betterRank = rank > wRank;
+    const sameRankHigherPriority = rank === wRank && priority.indexOf(ind.name) < priority.indexOf(worst?.name ?? '');
+    if (betterRank || sameRankHigherPriority) worst = ind;
+  }
+
+  const lead    = leads[phase]?.[band]   ?? '';
+  const signal  = worst ? (signals[worst.name]?.[worst.status] ?? '') : '';
+  const posture = postures[phase]        ?? '';
+  return [lead, signal, posture].filter(Boolean).join(' ');
+}
+
 // Hardcoded fallbacks shown until live data loads
 const FALLBACK_T1 = [
   { name: 'Yield Curve (2Y–10Y)', value: '−0.14%', reading: 'Inverted',          status: 'WARNING' },
@@ -447,7 +533,7 @@ export default function CompassPage() {
                 Current Regime: <span style={{ color: regimeColor }}>{livePhase}</span>
               </h1>
               <p style={{ fontFamily: 'Arial', fontSize: 15, color: 'rgba(250,249,246,0.60)', lineHeight: 1.65, maxWidth: 480 }}>
-                Our market regime classification engine synthesizes macro, credit, momentum, and sentiment indicators into a single cycle reading.
+                {generateRegimeBlurb(livePhase, liveConfidence, tier1Indicators)}
               </p>
               {liveLaborGated && (
                 <div style={{ marginTop: 18, maxWidth: 480, borderLeft: `2px solid ${C.gold}`, paddingLeft: 14 }}>
