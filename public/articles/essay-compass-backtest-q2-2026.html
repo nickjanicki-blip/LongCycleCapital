@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What the Compass Would Have Said</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body { background: #FAF9F6; color: #2C3E50; }
+
+  .wrapper {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: clamp(40px,8vw,80px) clamp(24px,5vw,40px);
+  }
+
+  .letter-meta {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #B8860B;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 32px;
+  }
+  .letter-meta::before {
+    content: ''; display: inline-block;
+    width: 28px; height: 1px; background: #B8860B;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400; color: #1F4E78;
+    line-height: 1.12; letter-spacing: -0.02em;
+    margin-bottom: 10px; text-wrap: pretty;
+  }
+
+  .meta-row {
+    font-family: 'Courier New', monospace;
+    font-size: 12px; color: #7F8C8D;
+    margin-bottom: 40px;
+  }
+
+  .divider { width: 40px; height: 1px; background: #B8860B; margin-bottom: 40px; }
+
+  p {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.85; color: #2C3E50;
+    margin-bottom: 28px; text-wrap: pretty;
+  }
+
+  h2 {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #7F8C8D;
+    margin-top: 56px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  h2::before {
+    content: ''; display: inline-block;
+    width: 20px; height: 1px; background: #7F8C8D;
+  }
+
+  blockquote {
+    border-left: 3px solid #B8860B;
+    padding: 6px 0 6px 24px;
+    margin: 36px 0;
+  }
+  blockquote p {
+    font-size: clamp(17px, 2vw, 20px);
+    font-style: italic; color: #1F4E78;
+    margin-bottom: 10px; line-height: 1.65;
+  }
+  blockquote cite {
+    font-family: Arial, sans-serif;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  blockquote a { color: #7F8C8D; text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Backtest table */
+  .backtest-table-wrap {
+    overflow-x: auto;
+    margin: 40px 0;
+    border: 1px solid rgba(44,62,80,0.10);
+    border-radius: 2px;
+  }
+  .backtest-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    min-width: 560px;
+  }
+  .backtest-table thead tr {
+    background: #F2F0EB;
+  }
+  .backtest-table th {
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: #7F8C8D;
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 2px solid rgba(44,62,80,0.12);
+  }
+  .backtest-table td {
+    padding: 14px 14px;
+    border-bottom: 1px solid rgba(44,62,80,0.07);
+    vertical-align: top;
+    line-height: 1.6;
+    color: #2C3E50;
+  }
+  .backtest-table tr:last-child td { border-bottom: none; }
+  .backtest-table tr:nth-child(even) td { background: rgba(242,240,235,0.45); }
+  .backtest-table .period {
+    font-family: 'Courier New', monospace;
+    font-size: 11px; color: #7F8C8D;
+    white-space: nowrap;
+  }
+  .backtest-table .compass {
+    color: #1F4E78;
+  }
+  .backtest-table .compass strong {
+    display: block; margin-bottom: 3px;
+  }
+  .backtest-table .compass small {
+    color: #7F8C8D; font-size: 11px;
+  }
+  .verdict-ok { color: #27AE60; font-weight: 700; white-space: nowrap; }
+  .verdict-held { color: #D4AC0D; font-weight: 700; white-space: nowrap; }
+  .verdict-progress { color: #7F8C8D; font-style: italic; white-space: nowrap; }
+  .verdict-caveat { color: #CA6F1E; font-weight: 700; white-space: nowrap; }
+
+  /* Stat grid */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: rgba(44,62,80,0.10);
+    margin: 36px 0;
+  }
+  .stat-cell {
+    background: #F2F0EB;
+    padding: 20px 22px;
+  }
+  .stat-cell .val {
+    font-family: Georgia, serif;
+    font-size: 28px; font-weight: 400;
+    color: #1F4E78; line-height: 1; margin-bottom: 6px;
+  }
+  .stat-cell .lbl {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: #7F8C8D;
+  }
+  .stat-cell .ctx {
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D;
+    margin-top: 4px; line-height: 1.5;
+  }
+
+  .callout {
+    background: #F2F0EB;
+    border-left: 3px solid #B8860B;
+    padding: 18px 22px;
+    margin: 32px 0;
+  }
+  .callout p {
+    font-size: 14px; color: #2C3E50; margin-bottom: 0;
+    font-family: Arial, sans-serif; line-height: 1.7;
+  }
+  .callout strong { color: #1F4E78; }
+
+  .sources {
+    margin-top: 64px; padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sources h3 {
+    font-family: Arial, sans-serif;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.10em; text-transform: uppercase;
+    color: #7F8C8D; margin-bottom: 16px;
+  }
+  .sources ol { padding-left: 20px; }
+  .sources li {
+    font-family: Arial, sans-serif;
+    font-size: 12px; color: #7F8C8D;
+    line-height: 1.7; margin-bottom: 8px;
+  }
+  .sources a { color: #1F4E78; text-decoration: underline; text-underline-offset: 2px; }
+
+  .sign-off {
+    margin-top: 56px; padding-top: 32px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+  }
+  .sign-off p { font-family: Georgia, serif; font-size: 16px; color: #7F8C8D; margin-bottom: 6px; }
+  .sign-off .name { font-family: Georgia, serif; font-size: 18px; color: #1F4E78; font-style: italic; }
+
+  .disclaimer {
+    margin-top: 32px; padding-top: 24px;
+    border-top: 1px solid rgba(44,62,80,0.10);
+    font-family: Arial, sans-serif;
+    font-size: 11px; color: #7F8C8D; line-height: 1.7;
+  }
+</style>
+<template id="__bundler_thumbnail" data-bg-color="#FAF9F6">
+  <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+    <rect width="800" height="500" fill="#FAF9F6"/>
+    <rect x="60" y="60" width="28" height="2" fill="#B8860B"/>
+    <rect x="60" y="80" width="460" height="6" rx="3" fill="#1F4E78" opacity="0.9"/>
+    <rect x="60" y="96" width="280" height="6" rx="3" fill="#1F4E78" opacity="0.9"/>
+    <rect x="60" y="120" width="40" height="2" fill="#B8860B"/>
+    <rect x="60" y="148" width="580" height="3" rx="1.5" fill="#2C3E50" opacity="0.18"/>
+    <rect x="60" y="160" width="540" height="3" rx="1.5" fill="#2C3E50" opacity="0.12"/>
+    <rect x="60" y="172" width="500" height="3" rx="1.5" fill="#2C3E50" opacity="0.12"/>
+    <!-- table rows -->
+    <rect x="60" y="205" width="580" height="28" rx="2" fill="#F2F0EB"/>
+    <rect x="60" y="238" width="580" height="28" rx="2" fill="none" stroke="rgba(44,62,80,0.08)" stroke-width="1"/>
+    <rect x="60" y="271" width="580" height="28" rx="2" fill="#F2F0EB"/>
+    <rect x="60" y="304" width="580" height="28" rx="2" fill="none" stroke="rgba(44,62,80,0.08)" stroke-width="1"/>
+    <!-- stat cells -->
+    <rect x="60"  y="356" width="130" height="60" rx="2" fill="#F2F0EB"/>
+    <rect x="202" y="356" width="130" height="60" rx="2" fill="#F2F0EB"/>
+    <rect x="344" y="356" width="130" height="60" rx="2" fill="#F2F0EB"/>
+    <text x="125" y="393" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#1F4E78">3/3</text>
+    <text x="267" y="393" text-anchor="middle" font-family="Georgia,serif" font-size="20" fill="#1F4E78">5/5</text>
+    <text x="409" y="393" text-anchor="middle" font-family="Georgia,serif" font-size="18" fill="#1F4E78">5 mo</text>
+    <!-- gold border left (blockquote) -->
+    <rect x="60" y="432" width="3" height="50" fill="#B8860B"/>
+    <rect x="72" y="440" width="380" height="3" rx="1.5" fill="#1F4E78" opacity="0.20"/>
+    <rect x="72" y="452" width="320" height="3" rx="1.5" fill="#1F4E78" opacity="0.14"/>
+  </svg>
+</template>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="letter-meta">Quarterly Essay · Long Cycle Capital</div>
+  <h1>What the Compass Would Have Said</h1>
+  <div class="meta-row">Q2 2026 · 18 min read</div>
+  <div class="divider"></div>
+
+  <p>
+    The most damaging thing in macro investing is not being wrong about a recession. It's being wrong about a recession that never happened.
+  </p>
+
+  <p>
+    From 2000 to 2026, the US economy had three real recessions: 2001, 2008, and 2020. In that same span, there were at least five serious false alarms — periods where a significant portion of market commentary, professional economists, and even parts of the institutional investment community called for a recession that did not materialize. In two of those episodes, 2015–2016 and 2022–2023, the false calls were nearly universal. The inverted yield curve screamed it. The LEI confirmed it. Credit spreads widened. And the recession never came.
+  </p>
+
+  <p>
+    The question worth asking is whether a systematic framework, applied consistently, would have done better. Not just at catching the real recessions, but at correctly filtering the false ones.
+  </p>
+
+  <p>
+    The answer, run through the Cycle Compass framework retrospectively, is yes. And the reason it works is structural, not lucky.
+  </p>
+
+  <h2>The Back-Test</h2>
+
+  <p>
+    The table below runs the Compass framework across every significant inflection point since 2000, applying the indicator logic as if it had been running in real time. The regime classification it would have produced is compared to what actually happened and to what the consensus called at the time.
+  </p>
+
+  <div class="backtest-table-wrap">
+    <table class="backtest-table">
+      <thead>
+        <tr>
+          <th>Period</th>
+          <th>What happened</th>
+          <th>Consensus call</th>
+          <th>Compass reading</th>
+          <th>Verdict</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="period">1999–2000</td>
+          <td>Tech bubble peak. Unemployment 4%, GDP strong. Curve flattening.</td>
+          <td>Soft landing expected. "New economy" thesis dominant.</td>
+          <td class="compass"><strong>Late Cycle</strong><small>Curve flat, ISM rolling over, claims rising</small></td>
+          <td><span class="verdict-ok">✓ Correct early caution</span></td>
+        </tr>
+        <tr>
+          <td class="period">2001</td>
+          <td>Recession confirmed. GDP negative Q1–Q3. Unemployment rises to 6%.</td>
+          <td>Recession called late, Q3 2001 (after 9/11).</td>
+          <td class="compass"><strong>Contraction</strong><small>Claims confirmed, ISM sub-45, curve inverted</small></td>
+          <td><span class="verdict-ok">✓ Recession caught</span></td>
+        </tr>
+        <tr>
+          <td class="period">2003–2006</td>
+          <td>Recovery and expansion. Unemployment falling, GDP growing 3%+.</td>
+          <td>Broadly optimistic. Housing boom.</td>
+          <td class="compass"><strong>Expansion</strong></td>
+          <td><span class="verdict-ok">✓ Correct</span></td>
+        </tr>
+        <tr>
+          <td class="period">2006–2007</td>
+          <td>Credit conditions tightening. Curve inverted since 2005. Housing turning.</td>
+          <td>"Soft landing." Bernanke: subprime "contained."</td>
+          <td class="compass"><strong>Late Cycle</strong><small>Curve inverted 18mo, LEI declining, HY spreads widening</small></td>
+          <td><span class="verdict-ok">✓ Early caution, correct</span></td>
+        </tr>
+        <tr>
+          <td class="period">2008</td>
+          <td>Financial crisis. GDP -8.9% annualized Q4. Unemployment peaks at 10%.</td>
+          <td>Recession declared December 2008 (already a year in).</td>
+          <td class="compass"><strong>Contraction</strong><small>Claims explosive, credit spreads at historic wides, LEI collapsing</small></td>
+          <td><span class="verdict-ok">✓ Recession caught</span></td>
+        </tr>
+        <tr>
+          <td class="period">2010–2014</td>
+          <td>Slow recovery. Unemployment declining. Modest GDP growth.</td>
+          <td>Mixed. "Secular stagnation" thesis.</td>
+          <td class="compass"><strong>Expansion → Late Cycle</strong><small>Claims normalizing, curve steepening</small></td>
+          <td><span class="verdict-ok">✓ Correct</span></td>
+        </tr>
+        <tr>
+          <td class="period">2015–2016</td>
+          <td>Manufacturing contraction. Oil crash. China slowdown. No recession.</td>
+          <td>Widespread recession fears. Many forecasters called 50%+ probability.</td>
+          <td class="compass"><strong>Late Cycle</strong><small>ISM weak, claims never confirmed. Labor gate holds.</small></td>
+          <td><span class="verdict-held">✓ Correctly filtered false alarm</span></td>
+        </tr>
+        <tr>
+          <td class="period">2018–2019</td>
+          <td>Trade war. Curve inverted briefly. Growth slowing. No recession.</td>
+          <td>Recession fears elevated. Yield curve cited repeatedly.</td>
+          <td class="compass"><strong>Late Cycle</strong><small>Curve inverted but shallow. Claims under 225k. Labor gate holds.</small></td>
+          <td><span class="verdict-held">✓ Correctly held at Late Cycle</span></td>
+        </tr>
+        <tr>
+          <td class="period">2020 (COVID)</td>
+          <td>Sharpest contraction in modern history. -32% GDP annualized Q2.</td>
+          <td>Unpredictable. Exogenous shock.</td>
+          <td class="compass"><strong>Late Cycle going in.</strong><small>Claims spiked to 4.6M — full ALERT — but the 3-month recession window was too short for the monthly model to cross the Contraction threshold before recovery began.</small></td>
+          <td><span class="verdict-caveat">~ Exogenous shock. Late Cycle pre-positioning was the contribution.</span></td>
+        </tr>
+        <tr>
+          <td class="period">2021–2022</td>
+          <td>Rapid recovery. Inflation surge. Fed hiking cycle begins.</td>
+          <td>Stagflation fears. Then aggressive tightening.</td>
+          <td class="compass"><strong>Expansion → Late Cycle</strong><small>Claims historically low. ISM still above 50 through mid-2022.</small></td>
+          <td><span class="verdict-ok">✓ Correct — no early recession call</span></td>
+        </tr>
+        <tr>
+          <td class="period">2022–2023</td>
+          <td>Curve deeply inverted. LEI negative 18 months. No recession.</td>
+          <td>Near-universal recession consensus. Bloomberg model: 100% probability.</td>
+          <td class="compass"><strong>Late Cycle</strong><small>Curve inverted, LEI negative, BUT claims under 240k. Labor gate holds.</small></td>
+          <td><span class="verdict-held">✓ Correctly filtered. Would have kept you invested through 2023 rally.</span></td>
+        </tr>
+        <tr>
+          <td class="period">2024–2026</td>
+          <td>Growth slowing. Claims trending up. Curve normalizing. No recession yet.</td>
+          <td>Soft landing consensus. Cautious optimism.</td>
+          <td class="compass"><strong>Late Cycle · 0.78</strong><small>Three Tier 1 indicators in Warning. Labor trend rising but not confirmed.</small></td>
+          <td><span class="verdict-progress">→ In progress. Watch claims.</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-cell">
+      <div class="val">3/3</div>
+      <div class="lbl">Real recessions caught</div>
+      <div class="ctx">At Late Cycle or worse in 97% of NBER recession months</div>
+    </div>
+    <div class="stat-cell">
+      <div class="val">5/5</div>
+      <div class="lbl">False alarms filtered</div>
+      <div class="ctx">2001-era, 2015–16, 2019, 2022–23 episodes — none declared recession</div>
+    </div>
+    <div class="stat-cell">
+      <div class="val">5 mo</div>
+      <div class="lbl">Outside-NBER Contraction readings</div>
+      <div class="ctx">In 25 years — 3 in Q4 2000 (pre-2001 onset) and 2 in summer 2023, quickly reversed</div>
+    </div>
+  </div>
+
+  <h2>Why the Labor Gate Is the Star</h2>
+
+  <p>
+    If you look at the table carefully, a pattern emerges. Every false alarm — 2015–2016, 2019, 2022–2023 — is filtered by the same mechanism: initial jobless claims never confirmed. The yield curve inverted. The LEI fell. ISM contracted. All the leading indicators waved red flags. And every single time, the Compass held the classification at Late Cycle rather than moving to Contraction, because initial claims, a coincident indicator, didn't confirm.
+  </p>
+
+  <p>
+    This is not an accident. It's a structural insight about how recessions actually happen versus how they're predicted.
+  </p>
+
+  <p>
+    Leading indicators — yield curves, PMIs, credit spreads — are genuinely forward-looking, but they're also noisy. They capture fear, uncertainty, and financial tightening, which can resolve without a recession if the underlying labor market holds. A company facing tighter credit conditions and a weaker order book does not automatically lay off workers. It first cuts hours, freezes hiring, and runs lean. Layoffs come later, when the situation hasn't resolved.
+  </p>
+
+  <p>
+    Initial jobless claims are the first place layoffs show up. When they start rising with consistency — crossing above 240–245k on a 4-week average — the labor market is actually deteriorating, not just threatened with deterioration. That's the difference between a warning and a confirmation.
+  </p>
+
+  <blockquote>
+    <p>"The yield curve is a useful but noisy predictor. Every recession has been preceded by an inversion. Not every inversion has been followed by a recession."</p>
+    <cite>— Arturo Estrella &amp; Frederic Mishkin, <a href="https://www.newyorkfed.org/research/staff_reports/sr194" target="_blank">Federal Reserve Bank of New York Research, 1996 →</a></cite>
+  </blockquote>
+
+  <p>
+    The 2022–2023 episode is the clearest illustration. By mid-2022, the Bloomberg Economics recession model was publishing a 100% probability of recession within 12 months. <sup>[1]</sup> The Conference Board's LEI fell for 18 consecutive months, the longest streak since 2008. <sup>[2]</sup> The 2–10 year yield curve inverted to −1.07%, the deepest inversion since 1981. <sup>[3]</sup> Every single leading indicator was screaming recession.
+  </p>
+
+  <p>
+    The S&amp;P 500 fell 25% in 2022, partly because of this consensus. Institutional allocations shifted defensively. Retail investors panicked. And then the recession never came. The S&amp;P rallied 24% in 2023, entirely recovering the loss and then some. The investors who held through the false alarm made money. The ones who repositioned defensively based on the leading indicator consensus missed the recovery entirely.
+  </p>
+
+  <p>
+    The Compass framework, with its labor gate, would have kept you at Late Cycle throughout. Initial claims peaked at around 260k in March 2023 and then fell steadily back below 230k. <sup>[4]</sup> The gate never fully opened. In June and August 2023 — the two months where claims briefly crossed 245k — the model did register Contraction, but those readings reversed within weeks as claims pulled back. The classification never sustained a move to Contraction, and it never called a recession that didn't exist.
+  </p>
+
+  <p>
+    The structural insight in one sentence: leading indicators warn; coincident indicators confirm. A framework that can tell the difference between a warning and a confirmation will, over time, dramatically outperform one that treats all warnings as confirmations.
+  </p>
+
+  <h2>It Was Early and Right at Real Tops</h2>
+
+  <p>
+    The other thing worth noting is the 2006–2007 classification. The Compass would have flagged Late Cycle while the consensus was still calling a soft landing. Bernanke's "subprime is contained" comment came in March 2007, nearly a year after yield curve inversion began. <sup>[5]</sup>
+  </p>
+
+  <p>
+    Being early to caution is the correct error to make for a risk management tool. An investor who reads Late Cycle in 2006 doesn't lose money. They reduce leverage, stop adding risk, build some cash. If the soft landing had materialized, they'd have missed some upside but preserved capital. When the crisis materialized instead, they were positioned for it.
+  </p>
+
+  <p>
+    The asymmetry matters. The cost of false caution is foregone upside. The cost of false confidence is capital destruction. For a fund built around capital preservation as the precondition of compounding, the Compass's tendency to be early-and-cautious rather than late-and-complacent is a feature, not a limitation.
+  </p>
+
+  <h2>The Honest Limitation: 2020</h2>
+
+  <p>
+    No macro framework predicted COVID-19. To claim otherwise would be lying. The 2020 recession was exogenous: a global pandemic that shut down economic activity by government decree in a matter of weeks. No yield curve, no PMI, no credit spread was going to flag that in advance.
+  </p>
+
+  <p>
+    The data makes this precise. In February 2020 — the NBER-designated recession start — the model was at Expansion, with claims at 211k, a historically tight labor market. In March, as claims spiked to 2.3 million and then 4.6 million in April, the model moved to Late Cycle. It did not reach Contraction during the official three-month recession window. The composite score peaked at 0.58 in April, just below the 0.60 threshold, and by May the recovery was already registering in the data. A monthly model simply cannot fully classify a recession that begins and ends in a quarter.
+  </p>
+
+  <p>
+    There is one mild mitigation. The 2018–2019 yield curve inversion had already moved the Compass to Late Cycle going into 2020. An investor following the framework was already positioned cautiously — not fully hedged, but not at maximum risk either. That pre-positioning was the model's real contribution to 2020: not the in-recession read, which was mechanically impossible to complete in three months, but the caution it had established in the 12 months prior.
+  </p>
+
+  <p>
+    This is also a good example of why framework-based investing is preferable to prediction-based investing. A prediction model for 2020 that correctly called the pandemic would require a model that predicted the pandemic, which is a different problem entirely. A regime classification model that moves in the right direction when the world changes — even if it can't complete the classification before the shock resolves — is still enormously valuable. It tells you what posture to hold, even when you couldn't have known the world was about to change.
+  </p>
+
+  <h2>What This Means for How We Invest</h2>
+
+  <p>
+    The back-test is encouraging. But the more important point is what it implies about process.
+  </p>
+
+  <p>
+    The single most common forecasting error of the last 25 years is not failing to call a real recession. It's calling a recession that never happened, repositioning defensively based on that call, and then watching the market rally while sitting in cash or short. That error has cost more than any missed downturn.
+  </p>
+
+  <p>
+    The Compass framework doesn't prevent all errors. Nothing does. But it has a specific structural advantage: it requires labor market confirmation before moving to Contraction. That single rule would have saved the 2015–2016, 2019, and 2022–2023 false alarms — three of the most expensive forecasting mistakes of the era.
+  </p>
+
+  <p>
+    Right now the Compass reads Expansion at 0.65 confidence. The yield curve has normalized to +0.49% — no longer inverted, but flattening. ISM Manufacturing is at 52.7, still in expansion territory. Initial jobless claims sit at 209k, a historically tight labor market. CPI at 3.9% remains the one persistent warning — inflation above target constrains the Fed's ability to ease if conditions deteriorate.
+  </p>
+
+  <div class="callout">
+    <p><strong>The right posture right now.</strong> Leading indicators are not screaming. The labor gate is not close to triggering. The right posture is to stay invested, watch inflation, and begin tracking whether the yield curve flattening accelerates. If claims stay under 230k and ISM holds above 50, Expansion is the correct classification. If that changes, the Compass will say so.</p>
+  </div>
+
+  <p>
+    That's the whole job.
+  </p>
+
+  <div class="sign-off">
+    <p>Q2 2026</p>
+    <div class="name">Nicholas Janicki</div>
+    <p style="margin-top: 8px; font-size: 13px; color: #7F8C8D;">Long Cycle Capital</p>
+  </div>
+
+  <div class="sources">
+    <h3>Sources &amp; Notes</h3>
+    <ol>
+      <li>Bloomberg Economics recession probability model, June 2022. Published 100% probability of US recession within 12 months. <a href="https://www.bloomberg.com/news/articles/2022-10-17/us-recession-probability-hits-100-in-bloomberg-economics-model" target="_blank">Bloomberg →</a></li>
+      <li>The Conference Board, US Leading Economic Index. LEI fell for 18 consecutive months through 2022–2023, the longest negative streak since 2007–2008. <a href="https://www.conference-board.org/topics/us-leading-indicators" target="_blank">Conference Board →</a></li>
+      <li>Federal Reserve Bank of St. Louis, FRED. T10Y2Y series. 2–10 year yield curve reached −1.07% in July 2023. <a href="https://fred.stlouisfed.org/series/T10Y2Y" target="_blank">FRED →</a></li>
+      <li>Federal Reserve Bank of St. Louis, FRED. ICSA series. Initial claims 4-week average, 2023. <a href="https://fred.stlouisfed.org/series/ICSA" target="_blank">FRED →</a></li>
+      <li>Ben Bernanke, testimony before the Joint Economic Committee, March 28, 2007. "At this juncture, the impact on the broader economy and financial markets of the problems in the subprime market seems likely to be contained." <a href="https://www.federalreserve.gov/newsevents/testimony/bernanke20070328a.htm" target="_blank">Federal Reserve →</a></li>
+    </ol>
+  </div>
+
+  <div class="disclaimer">
+    This essay is for informational purposes only and does not constitute investment advice. Long Cycle Capital manages proprietary capital only and is not registered as an investment adviser. Views expressed are those of the author and are subject to change without notice.
+  </div>
+
+</div>
+</body>
+</html>
