@@ -127,7 +127,7 @@ export async function GET() {
 
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, ismObs,
-         spxCloses, dxyClose, copperClose, goldClose] = await Promise.all([
+         spxObs, dxyClose, copperClose, goldClose] = await Promise.all([
     fredObs('T10Y2Y',       1),
     fredObs('ICSA',         1),
     fredObs('CPIAUCSL',    14),
@@ -136,7 +136,7 @@ export async function GET() {
     fredObs('DFII10',       1),
     fredObs('USSLIND',     14),
     fredObs('NAPM',         1),
-    yahooCloses('%5EGSPC', '1y'),
+    fredObs('SP500',      260),   // S&P 500 daily — FRED is more reliable than Yahoo ^GSPC
     yahooCloses('DX-Y.NYB', '5d'),
     yahooCloses('HG=F',     '5d'),
     yahooCloses('GC=F',     '5d'),
@@ -199,11 +199,12 @@ export async function GET() {
   const dxyDisp = dxy != null ? dxy.toFixed(1) : null;
   const dxyRead = dxy != null ? (dxy < 95 ? 'Dollar weakness' : dxy < 102 ? 'Normal range' : dxy < 108 ? 'Elevated — approaching extreme' : 'Multi-year extreme') : null;
 
-  /* ── S&P vs 200 DMA */
+  /* ── S&P vs 200 DMA (FRED SP500, observations sorted newest-first) */
   let spxPct = null, spxSt = null, spxDisp = null, spxRead = null;
-  if (spxCloses && spxCloses.length >= 200) {
-    const sma = spxCloses.slice(-200).reduce((a, b) => a + b, 0) / 200;
-    const last = spxCloses[spxCloses.length - 1];
+  if (spxObs && spxObs.length >= 200) {
+    const closes = spxObs.map(o => parseFloat(o.value));   // [latest … oldest]
+    const last = closes[0];
+    const sma  = closes.slice(0, 200).reduce((a, b) => a + b, 0) / 200;
     spxPct  = ((last - sma) / sma) * 100;
     spxSt   = clamp(spxPct, [5, 0, -5]);
     spxDisp = `${spxPct >= 0 ? '+' : ''}${spxPct.toFixed(1)}%`;
@@ -222,14 +223,17 @@ export async function GET() {
     leiTrendRead = dec === 0 ? 'Rising trend' : `Declining ${dec} of last 4 months`;
   }
 
-  /* ── LEI YoY */
+  /* ── LEI 12-month change ──────────────────────────────────────────────
+   * USSLIND is already a forward growth-rate index (~1–2), not a price
+   * level, so a YoY *percent* change is meaningless. We use the 12-month
+   * change in the rate itself, in percentage points. */
   let leiYoY = null, leiYoYSt = null, leiYoYDisp = null, leiYoYRead = null;
   if (leiObs && leiObs.length >= 13) {
     const lat = parseFloat(leiObs[0].value), yr = parseFloat(leiObs[12].value);
-    leiYoY     = ((lat - yr) / yr) * 100;
-    leiYoYSt   = clamp(leiYoY, [2, 0, -3]);
-    leiYoYDisp = `${leiYoY >= 0 ? '+' : ''}${leiYoY.toFixed(1)}%`;
-    leiYoYRead = leiYoY > 2 ? 'Positive momentum' : leiYoY >= 0 ? 'Slowing momentum' : leiYoY >= -3 ? 'Contraction signal' : 'Recession-level reading';
+    leiYoY     = lat - yr;                       // percentage-point change in the leading rate
+    leiYoYSt   = clamp(leiYoY, [0.5, 0, -0.5]);
+    leiYoYDisp = `${leiYoY >= 0 ? '+' : ''}${leiYoY.toFixed(2)} pt`;
+    leiYoYRead = leiYoY > 0.5 ? 'Improving momentum' : leiYoY >= 0 ? 'Steady' : leiYoY >= -0.5 ? 'Slowing momentum' : 'Deteriorating';
   }
 
   /* ── Copper / Gold ratio */
