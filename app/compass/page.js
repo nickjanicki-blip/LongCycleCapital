@@ -125,11 +125,13 @@ function PhaseNarrative({ currentPhaseIdx = 2 }) {
   const trackRef = useRef(null);
   const timerRef = useRef(null);
 
-  // Scroll to current phase on mount (no animation)
+  // Snap to the current regime on mount AND whenever it changes (e.g. after
+  // live data loads and updates the regime from the default placeholder).
   useEffect(() => {
     const t = trackRef.current;
     if (t) t.scrollLeft = (currentIdx + 1) * t.offsetWidth;
-  }, []);
+    setActiveIdx(currentIdx);
+  }, [currentIdx]);
 
   const handleScroll = () => {
     clearTimeout(timerRef.current);
