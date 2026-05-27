@@ -13,7 +13,7 @@ const C = {
 };
 
 /* ── SVG Gauge ─────────────────────────────────────────────── */
-function CycleDial({ needleAngle = 108 - 0.82 * 36 }) {
+function CycleDial({ needleAngle = 90, confidence = 0.82 }) {
   const cx = 250, cy = 256, R = 178, ri = 122;
   const rad = (a) => a * Math.PI / 180;
   const ox = (a) => cx + R * Math.cos(rad(a));
@@ -46,6 +46,17 @@ function CycleDial({ needleAngle = 108 - 0.82 * 36 }) {
   const labelPos = (a) => ({ x: cx + labelR * Math.cos(rad(a)), y: cy - labelR * Math.sin(rad(a)) });
   const anchor = (pos) => pos.x < cx - 14 ? 'end' : pos.x > cx + 14 ? 'start' : 'middle';
 
+  // Cone of uncertainty: wider when confidence is low, vanishes near 1.0
+  const halfWidth = (1 - confidence) * 42;
+  const wHi = Math.min(180, needleAngle + halfWidth);
+  const wLo = Math.max(0, needleAngle - halfWidth);
+  const wedge = [
+    `M ${cx} ${cy}`,
+    `L ${(cx + nLen * Math.cos(rad(wHi))).toFixed(1)} ${(cy - nLen * Math.sin(rad(wHi))).toFixed(1)}`,
+    `A ${nLen} ${nLen} 0 0 1 ${(cx + nLen * Math.cos(rad(wLo))).toFixed(1)} ${(cy - nLen * Math.sin(rad(wLo))).toFixed(1)}`,
+    'Z',
+  ].join(' ');
+
   return (
     <svg viewBox="0 0 500 272" width="100%" style={{ maxWidth: 480, display: 'block', margin: '0 auto' }}>
       {phases.map(({ a1, a2, color, label }, i) => {
@@ -61,6 +72,8 @@ function CycleDial({ needleAngle = 108 - 0.82 * 36 }) {
           </g>
         );
       })}
+      {/* Cone of uncertainty — width reflects (1 − confidence) */}
+      <path d={wedge} fill={C.navy} opacity={0.12} />
       <circle cx={(cx + (R + 8) * Math.cos(rad(needleAngle))).toFixed(1)} cy={(cy - (R + 8) * Math.sin(rad(needleAngle))).toFixed(1)} r="4" fill={C.navy} />
       <line x1={cx} y1={cy} x2={nx} y2={ny} stroke={C.navy} strokeWidth="2.5" strokeLinecap="round" />
       <line x1={cx} y1={cy} x2={(cx - 28 * Math.cos(rad(needleAngle))).toFixed(1)} y2={(cy + 28 * Math.sin(rad(needleAngle))).toFixed(1)} stroke={C.navy} strokeWidth="2" strokeLinecap="round" opacity="0.3" />
@@ -369,8 +382,11 @@ export default function CompassPage() {
   const [livePhase,      setLivePhase]      = useState('Late Cycle');
   const [livePhaseIdx,   setLivePhaseIdx]   = useState(2);
   const [liveConfidence, setLiveConfidence] = useState(0.82);
-  const [liveNeedle,     setLiveNeedle]     = useState(+(108 - 0.82 * 36).toFixed(1));
+  const [liveNeedle,     setLiveNeedle]     = useState(90);  // Late Cycle zone centre
   const [liveUpdated,    setLiveUpdated]    = useState('May 24, 2026');
+  const [liveRawPhase,   setLiveRawPhase]   = useState(null);
+  const [liveLaborGated, setLiveLaborGated] = useState(false);
+  const [liveTransitional, setLiveTransitional] = useState(false);
   const [tier1Indicators, setTier1]        = useState(FALLBACK_T1);
   const [liveGatedRows,   setGatedRows]    = useState(gatedRows);
 
@@ -383,6 +399,9 @@ export default function CompassPage() {
         setLivePhaseIdx(d.phaseIdx);
         setLiveConfidence(d.confidence);
         setLiveNeedle(d.needleAngle);
+        setLiveRawPhase(d.rawPhase);
+        setLiveLaborGated(d.laborGated);
+        setLiveTransitional(d.transitional);
         const dt = new Date(d.updatedAt);
         setLiveUpdated(dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
         // Merge live values; keep name as key to preserve drawer links
@@ -396,6 +415,13 @@ export default function CompassPage() {
       })
       .catch(() => {});
   }, []);
+
+  const PHASE_COLORS = [C.green, C.greenLight, C.amber, C.orange, C.red];
+  const regimeColor = PHASE_COLORS[livePhaseIdx] ?? C.amber;
+  const confidenceLabel =
+    liveConfidence >= 0.75 ? { text: 'High agreement',     color: 'rgba(250,249,246,0.55)' }
+  : liveConfidence >= 0.60 ? { text: 'Moderate agreement', color: 'rgba(250,249,246,0.55)' }
+  :                          { text: 'Low — transitional', color: C.gold };
 
   return (
     <div>
@@ -416,16 +442,31 @@ export default function CompassPage() {
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 24 }}>
             <div>
               <h1 style={{ fontFamily: "Georgia,serif", fontSize: 'clamp(32px,4vw,52px)', fontWeight: 400, color: C.bg, lineHeight: 1.1, marginBottom: 16 }}>
-                Current Regime: <span style={{ color: C.amber }}>{livePhase}</span>
+                Current Regime: <span style={{ color: regimeColor }}>{livePhase}</span>
               </h1>
               <p style={{ fontFamily: 'Arial', fontSize: 15, color: 'rgba(250,249,246,0.60)', lineHeight: 1.65, maxWidth: 480 }}>
                 Our market regime classification engine synthesizes macro, credit, momentum, and sentiment indicators into a single cycle reading.
               </p>
+              {liveLaborGated && (
+                <div style={{ marginTop: 18, maxWidth: 480, borderLeft: `2px solid ${C.gold}`, paddingLeft: 14 }}>
+                  <p style={{ fontFamily: 'Arial', fontSize: 13, color: 'rgba(250,249,246,0.78)', lineHeight: 1.6 }}>
+                    Leading indicators point to <strong style={{ color: C.bg }}>{liveRawPhase}</strong>, but the labor market hasn&apos;t confirmed. Regime held at <strong style={{ color: C.bg }}>{livePhase}</strong> — hold current posture until labor confirms.
+                  </p>
+                </div>
+              )}
+              {liveTransitional && !liveLaborGated && (
+                <div style={{ marginTop: 18, maxWidth: 480, borderLeft: `2px solid ${C.gold}`, paddingLeft: 14 }}>
+                  <p style={{ fontFamily: 'Arial', fontSize: 13, color: 'rgba(250,249,246,0.78)', lineHeight: 1.6 }}>
+                    Indicators are mixed — the reading sits near a phase boundary. Treat as transitional and await confirmation before shifting posture.
+                  </p>
+                </div>
+              )}
             </div>
             <div style={{ background: 'rgba(250,249,246,0.06)', border: '1px solid rgba(250,249,246,0.12)', borderRadius: 4, padding: '20px 28px', textAlign: 'center', flexShrink: 0 }}>
               <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(250,249,246,0.45)', marginBottom: 10 }}>Confidence</div>
-              <div style={{ fontFamily: "Georgia,serif", fontSize: 36, fontWeight: 400, color: C.amber, lineHeight: 1 }}>{liveConfidence.toFixed(2)}</div>
-              <div style={{ fontFamily: 'Arial', fontSize: 10, color: 'rgba(250,249,246,0.35)', marginTop: 8 }}>Updated {liveUpdated}</div>
+              <div style={{ fontFamily: "Georgia,serif", fontSize: 36, fontWeight: 400, color: regimeColor, lineHeight: 1 }}>{liveConfidence.toFixed(2)}</div>
+              <div style={{ fontFamily: 'Arial', fontSize: 10, fontWeight: 700, letterSpacing: '0.04em', color: confidenceLabel.color, marginTop: 8 }}>{confidenceLabel.text}</div>
+              <div style={{ fontFamily: 'Arial', fontSize: 10, color: 'rgba(250,249,246,0.35)', marginTop: 6 }}>Updated {liveUpdated}</div>
             </div>
           </div>
         </div>
@@ -435,7 +476,7 @@ export default function CompassPage() {
       <section style={{ background: C.bgSubtle, padding: 'clamp(40px,6vw,64px) 0' }}>
         <div className="page-max">
           <div style={{ maxWidth: 560, margin: '0 auto' }}>
-            <CycleDial needleAngle={liveNeedle} />
+            <CycleDial needleAngle={liveNeedle} confidence={liveConfidence} />
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginTop: 24, flexWrap: 'wrap' }}>
               {[['RECOVERY', C.green], ['EXPANSION', C.greenLight], ['LATE CYCLE', C.amber], ['CONTRACTION', C.orange], ['CRISIS', C.red]].map(([label, color]) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

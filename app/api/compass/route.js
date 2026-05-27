@@ -51,6 +51,10 @@ const WEIGHTS = {
   ff: 0.05, tips: 0.08, copper: 0.09, dxy: 0.04,
 };
 
+const PHASES = ['Recovery', 'Expansion', 'Late Cycle', 'Contraction', 'Crisis'];
+// Angular bounds of each phase on the 180°→0° dial (5 × 36°)
+const ZONE = [[180, 144], [144, 108], [108, 72], [72, 36], [36, 0]];
+
 function composite(statusMap) {
   let wSum = 0, scoreSum = 0;
   for (const [k, w] of Object.entries(WEIGHTS)) {
@@ -67,15 +71,45 @@ function composite(statusMap) {
   const sd   = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length);
   const conf = Math.max(0.35, Math.min(0.99, 1 - sd * 1.5));
 
-  // Map normalised stress → phase
-  let phase, phaseIdx, needleAngle;
-  if      (norm < 0.20) { phase = 'Recovery';    phaseIdx = 0; needleAngle = 162; }
-  else if (norm < 0.40) { phase = 'Expansion';   phaseIdx = 1; needleAngle = 126; }
-  else if (norm < 0.60) { phase = 'Late Cycle';  phaseIdx = 2; needleAngle = 108 - conf * 36; }
-  else if (norm < 0.80) { phase = 'Contraction'; phaseIdx = 3; needleAngle = 54; }
-  else                  { phase = 'Crisis';       phaseIdx = 4; needleAngle = 18; }
+  // ── Raw phase: what the full indicator set (incl. leading) suggests ──
+  let rawIdx;
+  if      (norm < 0.20) rawIdx = 0;
+  else if (norm < 0.40) rawIdx = 1;
+  else if (norm < 0.60) rawIdx = 2;
+  else if (norm < 0.80) rawIdx = 3;
+  else                  rawIdx = 4;
 
-  return { phase, phaseIdx, confidence: +conf.toFixed(2), needleAngle: +needleAngle.toFixed(1) };
+  // ── Labor-market gate ───────────────────────────────────────────────
+  // Leading indicators (yield curve, ISM, LEI, credit) can only take the
+  // regime to Late Cycle. Contraction/Crisis require the labor market —
+  // the coincident confirmation signal — to actually roll over. This is
+  // how NBER dates recessions: employment confirms, not the yield curve.
+  const labor = statusMap.claims;                  // OK | CAUTION | WARNING | ALERT
+  const laborCap = labor === 'ALERT'   ? 4         // labor breaking down → Crisis allowed
+                 : labor === 'WARNING' ? 3         // labor softening → Contraction allowed
+                 : 2;                              // OK / CAUTION / unknown → Late Cycle max
+  const phaseIdx = Math.min(rawIdx, laborCap);
+  const laborGated = phaseIdx < rawIdx;            // gate is actively holding the regime back
+
+  // ── Needle angle: continuous map of norm across the dial ─────────────
+  // The needle rests BETWEEN zones at a boundary instead of snapping to a
+  // phase centre. If the labor gate capped the regime, the needle pins to
+  // the edge of the capped zone so needle and regime name stay consistent.
+  let needleAngle = 180 * (1 - norm);
+  const [hi, lo] = ZONE[phaseIdx];
+  needleAngle = Math.min(hi, Math.max(lo, needleAngle));
+
+  return {
+    phase: PHASES[phaseIdx],
+    phaseIdx,
+    rawPhase: PHASES[rawIdx],
+    rawPhaseIdx: rawIdx,
+    laborGated,
+    transitional: conf < 0.60,
+    confidence: +conf.toFixed(2),
+    needleAngle: +needleAngle.toFixed(1),
+    norm: +norm.toFixed(3),
+  };
 }
 
 /* ── Main handler ──────────────────────────────────────────── */
@@ -206,7 +240,7 @@ export async function GET() {
     hy: hySt, leiTrend: leiTrendSt, leiYoY: leiYoYSt, spx: spxSt,
     ff: ffSt, tips: tipsSt, copper: cgSt, dxy: dxySt,
   };
-  const { phase, phaseIdx, confidence, needleAngle } = composite(statusMap);
+  const { phase, phaseIdx, rawPhase, rawPhaseIdx, laborGated, transitional, confidence, needleAngle, norm } = composite(statusMap);
 
   /* ── Response */
   return NextResponse.json({
@@ -214,8 +248,13 @@ export async function GET() {
     updatedAt: new Date().toISOString(),
     phase,
     phaseIdx,
+    rawPhase,
+    rawPhaseIdx,
+    laborGated,
+    transitional,
     confidence,
     needleAngle,
+    norm,
     tier1: [
       { name: 'Yield Curve (2Y–10Y)',   value: ycDisp,     reading: ycRead,     status: ycSt     ?? 'WARNING' },
       { name: 'ISM Manufacturing PMI',  value: ismDisp,    reading: ismRead,    status: ismSt    ?? 'WARNING' },
