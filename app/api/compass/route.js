@@ -63,13 +63,22 @@ function composite(statusMap) {
   }
   const norm = wSum ? scoreSum / wSum / 3 : 0.5;   // 0–1
 
-  // confidence = agreement among indicators (1 - spread)
-  const vals = Object.entries(WEIGHTS)
-    .filter(([k]) => statusMap[k] != null)
-    .map(([k]) => SCORE[statusMap[k]] / 3);
-  const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
-  const sd   = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length);
-  const conf = Math.max(0.35, Math.min(0.99, 1 - sd * 1.5));
+  // ── Confidence: how firmly the needle sits inside its phase zone ──────
+  // Boundary-distance metric. Dead-centre of a zone → high confidence
+  // ("firmly in this regime"); hugging a boundary → low confidence ("could
+  // tip either way"). This is the same thing the dial's cone of uncertainty
+  // draws, so the number and the picture always agree.
+  const BAND = 0.20;                                          // each phase spans 0.20 of norm
+  const posInBand  = norm - Math.floor(norm / BAND) * BAND;   // 0 .. 0.20
+  const distToEdge = Math.min(posInBand, BAND - posInBand);   // 0 .. 0.10
+  const proximity  = distToEdge / (BAND / 2);                 // 0 (edge) .. 1 (centre)
+  const conf = 0.40 + proximity * 0.57;                       // 0.40 .. 0.97
+
+  // Prior metric — indicator agreement — kept for easy revert:
+  // const vals = Object.entries(WEIGHTS).filter(([k]) => statusMap[k] != null).map(([k]) => SCORE[statusMap[k]] / 3);
+  // const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
+  // const sd   = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length);
+  // const conf = Math.max(0.35, Math.min(0.99, 1 - sd * 1.5));
 
   // ── Raw phase: what the full indicator set (incl. leading) suggests ──
   let rawIdx;
