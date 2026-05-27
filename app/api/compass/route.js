@@ -65,7 +65,7 @@ function composite(statusMap) {
     .map(([k]) => SCORE[statusMap[k]] / 3);
   const mean = vals.reduce((a, b) => a + b, 0) / vals.length;
   const sd   = Math.sqrt(vals.reduce((a, b) => a + (b - mean) ** 2, 0) / vals.length);
-  const conf = Math.max(0.3, Math.min(0.99, 1 - sd * 2));
+  const conf = Math.max(0.35, Math.min(0.99, 1 - sd * 1.5));
 
   // Map normalised stress → phase
   let phase, phaseIdx, needleAngle;
@@ -112,7 +112,7 @@ export async function GET() {
 
   /* ── ISM PMI */
   const ism     = fv(ismObs);
-  const ismSt   = clamp(ism, [55, 50, 48]);
+  const ismSt   = clamp(ism, [55, 50, 46]);  // ALERT below 46, not 48
   const ismDisp = ism != null ? ism.toFixed(1) : null;
   const ismRead = ism != null ? (ism < 48 ? 'Contraction territory' : ism < 50 ? 'Near contraction' : ism < 55 ? 'Slowing growth' : 'Expanding') : null;
 
