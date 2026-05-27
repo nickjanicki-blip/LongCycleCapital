@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const FRED_KEY  = process.env.FRED_API_KEY;
+const FRED_KEY  = process.env.FRED_API_KEY?.trim();
 const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
 const CACHE     = { next: { revalidate: 86400 } };
 
@@ -122,27 +122,8 @@ function composite(statusMap) {
 }
 
 /* ── Main handler ──────────────────────────────────────────── */
-export async function GET(request) {
+export async function GET() {
   if (!FRED_KEY) return NextResponse.json({ live: false });
-
-  // Temporary diagnostic — hit /api/compass?debug=1 to inspect FRED directly
-  const dbg = new URL(request.url).searchParams.get('debug');
-  if (dbg === '1') {
-    const url = `${FRED_BASE}?series_id=T10Y2Y&api_key=${FRED_KEY}&file_type=json&sort_order=desc&limit=1`;
-    try {
-      const r = await fetch(url, { cache: 'no-store' });
-      const body = await r.text();
-      return NextResponse.json({
-        keyLength: FRED_KEY.length,
-        keyHasWhitespace: /\s/.test(FRED_KEY),
-        keyPreview: FRED_KEY.slice(0, 3) + '…' + FRED_KEY.slice(-3),
-        httpStatus: r.status,
-        fredBody: body.slice(0, 600),
-      });
-    } catch (e) {
-      return NextResponse.json({ fetchError: String(e) });
-    }
-  }
 
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, ismObs,
@@ -256,9 +237,11 @@ export async function GET(request) {
   const copper = copperClose?.slice(-1)[0] ?? null;
   const gold   = goldClose?.slice(-1)[0] ?? null;
   if (copper && gold) {
-    const ratio = copper / gold;
+    // Copper futures (HG=F) are $/lb, gold (GC=F) $/oz. The conventional
+    // copper/gold ratio uses cents-per-pound over $/oz → ×100.
+    const ratio = (copper / gold) * 100;
     cgSt   = clamp(ratio, [0.25, 0.20, 0.15]);
-    cgDisp = ratio.toFixed(4);
+    cgDisp = ratio.toFixed(3);
     cgRead = ratio > 0.25 ? 'Risk-on, growth expected' : ratio > 0.20 ? 'Declining risk appetite' : ratio > 0.15 ? 'Risk-off signal' : 'Strong risk-off';
   }
 
