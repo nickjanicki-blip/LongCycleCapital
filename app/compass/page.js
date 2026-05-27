@@ -371,7 +371,7 @@ function GatedContent({ rows = gatedRows, onRowClick }) {
 // Hardcoded fallbacks shown until live data loads
 const FALLBACK_T1 = [
   { name: 'Yield Curve (2Y–10Y)', value: '−0.14%', reading: 'Inverted',          status: 'WARNING' },
-  { name: 'ISM Manufacturing PMI', value: '47.2',   reading: 'Contraction zone',  status: 'WARNING' },
+  { name: 'ISM Manufacturing PMI', value: '52.7',   reading: 'Modest expansion · manual', status: 'CAUTION' },
   { name: 'Unemployment Claims',   value: '247k',   reading: 'Rising trend',      status: 'CAUTION' },
   { name: 'CPI Year-over-Year',    value: '3.8%',   reading: 'Above 2% target',   status: 'CAUTION' },
 ];

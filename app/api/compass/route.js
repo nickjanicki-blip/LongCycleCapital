@@ -4,6 +4,11 @@ const FRED_KEY  = process.env.FRED_API_KEY?.trim();
 const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
 const CACHE     = { next: { revalidate: 86400 } };
 
+// ── ISM Manufacturing PMI — MANUAL ENTRY ─────────────────────────────
+// ISM's PMI is proprietary and not on FRED. Update this once a month from
+// ismworld.org (released the first business day, for the prior month).
+const ISM_MANUAL = { value: 52.7, asOf: 'April 2026' };  // released 2026-05-01
+
 /* ── FRED helpers ──────────────────────────────────────────── */
 async function fredObs(id, limit = 14) {
   if (!FRED_KEY) return null;
@@ -126,7 +131,7 @@ export async function GET() {
   if (!FRED_KEY) return NextResponse.json({ live: false });
 
   /* Parallel fetches */
-  const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, ismObs,
+  const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs,
          spxObs, dxyClose, copperClose, goldClose] = await Promise.all([
     fredObs('T10Y2Y',       1),
     fredObs('ICSA',         1),
@@ -135,7 +140,6 @@ export async function GET() {
     fredObs('FEDFUNDS',     1),
     fredObs('DFII10',       1),
     fredObs('USSLIND',     14),
-    fredObs('NAPM',         1),
     fredObs('SP500',      260),   // S&P 500 daily — FRED is more reliable than Yahoo ^GSPC
     yahooCloses('DX-Y.NYB', '5d'),
     yahooCloses('HG=F',     '5d'),
@@ -153,11 +157,12 @@ export async function GET() {
   const ycDisp = yc != null ? `${yc >= 0 ? '+' : ''}${yc.toFixed(2)}%` : null;
   const ycRead = yc != null ? (yc < 0 ? 'Inverted' : yc < 0.5 ? 'Flattening' : 'Normal slope') : null;
 
-  /* ── ISM PMI */
-  const ism     = fv(ismObs);
-  const ismSt   = clamp(ism, [55, 50, 46]);  // ALERT below 46, not 48
+  /* ── ISM PMI — manual (see ISM_MANUAL at top of file) */
+  const ism     = ISM_MANUAL.value;
+  const ismSt   = clamp(ism, [55, 50, 46]);  // ALERT below 46
   const ismDisp = ism != null ? ism.toFixed(1) : null;
-  const ismRead = ism != null ? (ism < 48 ? 'Contraction territory' : ism < 50 ? 'Near contraction' : ism < 55 ? 'Slowing growth' : 'Expanding') : null;
+  const descr   = ism > 55 ? 'Strong expansion' : ism >= 50 ? 'Modest expansion' : ism >= 46 ? 'Near contraction' : 'Contraction territory';
+  const ismRead = ism != null ? `${descr} · manual (${ISM_MANUAL.asOf})` : null;
 
   /* ── Claims */
   const claims     = fv(claimsObs);
