@@ -205,8 +205,13 @@ function HomeNewsletter() {
           We are not accepting outside capital. But we publish our framework, our Cycle Compass readings, and our thinking publicly. No predictions. No hype. Just the work.
         </p>
         {submitted ? (
-          <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontStyle: 'italic', color: C.gold }}>
-            You&apos;re in. Patience compounds.
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+            <div style={{ fontFamily: "Georgia,serif", fontSize: 18, fontStyle: 'italic', color: C.gold }}>
+              You&apos;re in. Patience compounds.
+            </div>
+            <a href="/login" style={{ fontFamily: 'Arial', fontSize: 11, letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, padding: '11px 22px', background: 'transparent', color: 'rgba(250,249,246,0.80)', border: '1px solid rgba(250,249,246,0.22)', borderRadius: 2, textDecoration: 'none' }}>
+              Access Dashboard
+            </a>
           </div>
         ) : (
           <form onSubmit={(e) => { e.preventDefault(); if (email) { setSubmitted(true); subscribe(); fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }); } }}
