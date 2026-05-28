@@ -15,6 +15,8 @@ export default function LoginPage() {
   const { login } = useAuth();
   const [form, setForm] = useState({ email: '', password: '' });
   const [attempted, setAttempted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const inputStyle = {
     fontFamily: 'Arial,Helvetica,sans-serif', fontSize: 14,
@@ -29,18 +31,37 @@ export default function LoginPage() {
     color: C.muted, display: 'block', marginBottom: 7,
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login();
-    // Tag as observer in Loops in background
-    if (form.email) {
+    setLoading(true);
+    setError('');
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      });
+
+      if (!res.ok) {
+        setError('Incorrect password. Please try again.');
+        setLoading(false);
+        return;
+      }
+
+      login();
+      // Tag as observer in Loops in background
       fetch('/api/observer-tag', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: form.email }),
       }).catch(() => {});
+
+      router.push('/compass');
+    } catch {
+      setError('Something went wrong. Please try again.');
+      setLoading(false);
     }
-    router.push('/compass');
   };
 
   return (
@@ -70,8 +91,11 @@ export default function LoginPage() {
                 <label style={labelStyle}>Password</label>
                 <input style={inputStyle} type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="••••••••••" required />
               </div>
-              <button type="submit" style={{ fontFamily: 'Arial', fontSize: 12, letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, padding: '13px 24px', background: C.navy, color: C.bg, border: 'none', borderRadius: 2, cursor: 'pointer' }}>
-                Login
+              {error && (
+                <p style={{ fontFamily: 'Arial', fontSize: 12, color: '#C0392B', margin: 0 }}>{error}</p>
+              )}
+              <button type="submit" disabled={loading} style={{ fontFamily: 'Arial', fontSize: 12, letterSpacing: '0.07em', textTransform: 'uppercase', fontWeight: 700, padding: '13px 24px', background: C.navy, color: C.bg, border: 'none', borderRadius: 2, cursor: loading ? 'wait' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                {loading ? 'Verifying...' : 'Login'}
               </button>
               <div style={{ fontFamily: 'Arial', fontSize: 12, color: C.muted, lineHeight: 1.7, borderTop: `1px solid ${C.border}`, paddingTop: 20 }}>
                 Access is by invitation only. Long Cycle Capital is not accepting new investors. This portal is for existing observers of the fund&apos;s public experiment.
