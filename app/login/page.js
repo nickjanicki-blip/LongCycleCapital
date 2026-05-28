@@ -32,6 +32,14 @@ export default function LoginPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     login();
+    // Tag as observer in Loops in background
+    if (form.email) {
+      fetch('/api/observer-tag', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email }),
+      }).catch(() => {});
+    }
     router.push('/compass');
   };
 

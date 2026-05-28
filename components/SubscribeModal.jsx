@@ -9,11 +9,17 @@ export default function SubscribeModal({ onClose }) {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     if (email) {
       setDone(true);
       subscribe();
+      // Add to Loops in background — don't block the UI
+      fetch('/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }).catch(() => {});
       setTimeout(onClose, 1400);
     }
   };
