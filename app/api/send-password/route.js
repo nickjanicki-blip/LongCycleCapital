@@ -3,7 +3,7 @@ export async function POST(req) {
     const { email } = await req.json();
     if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
 
-    await fetch('https://app.loops.so/api/v1/transactional', {
+    const loopsRes = await fetch('https://app.loops.so/api/v1/transactional', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.LOOPS_API_KEY}`,
@@ -17,6 +17,13 @@ export async function POST(req) {
         },
       }),
     });
+
+    const loopsBody = await loopsRes.json().catch(() => ({}));
+    console.log('Loops response:', loopsRes.status, JSON.stringify(loopsBody));
+
+    if (!loopsRes.ok) {
+      return Response.json({ error: 'Loops error', status: loopsRes.status, detail: loopsBody }, { status: 500 });
+    }
 
     return Response.json({ success: true });
   } catch (err) {
