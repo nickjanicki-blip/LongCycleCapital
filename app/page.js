@@ -209,7 +209,7 @@ function HomeNewsletter() {
             You&apos;re in. Patience compounds.
           </div>
         ) : (
-          <form onSubmit={(e) => { e.preventDefault(); if (email) { setSubmitted(true); subscribe(); } }}
+          <form onSubmit={(e) => { e.preventDefault(); if (email) { setSubmitted(true); subscribe(); fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email }) }); } }}
             style={{ display: 'flex', gap: 8, maxWidth: 420, margin: '0 auto', flexWrap: 'wrap' }}>
             <input
               type="email" value={email} onChange={(e) => setEmail(e.target.value)}
