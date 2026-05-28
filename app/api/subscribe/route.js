@@ -31,8 +31,8 @@ export async function POST(req) {
             <p style="font-size: 16px; line-height: 1.6;">Thanks for signing up.</p>
             <p style="font-size: 16px; line-height: 1.6;">
               Long Cycle Capital is a self-managed fund exploring cycle-based macro investing.
-              We publicly document our framework, our Cycle Compass readings, and our thinking —
-              no predictions, no hype, just the work.
+              We publicly document our framework, our Cycle Compass readings, and our thinking.
+              No predictions, no hype. Just the work.
             </p>
             <p style="font-size: 16px; line-height: 1.6;">
               You'll hear from us when we publish a new regime briefing or research note.
