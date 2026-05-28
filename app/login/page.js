@@ -88,7 +88,10 @@ export default function LoginPage() {
                 <input style={inputStyle} type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="you@institution.com" required />
               </div>
               <div>
-                <label style={labelStyle}>Password</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <label style={labelStyle}>Password</label>
+                  <span style={{ fontFamily: 'Arial', fontSize: 11, color: C.gold, fontStyle: 'italic' }}>Emailed to you on file</span>
+                </div>
                 <input style={inputStyle} type="password" value={form.password} onChange={e => setForm(f => ({ ...f, password: e.target.value }))} placeholder="••••••••••" required />
               </div>
               {error && (
