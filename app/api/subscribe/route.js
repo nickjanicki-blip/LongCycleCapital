@@ -1,4 +1,4 @@
-const AUDIENCE_ID = '50e36a46-5b0e-4662-99c5-22aff770bbba'; // LCC Subscribers
+const AUDIENCE_ID = 'f0b41801-f6c5-4f20-8c8c-a9d2bb60471f'; // LCC Observers
 
 export async function POST(req) {
   try {
