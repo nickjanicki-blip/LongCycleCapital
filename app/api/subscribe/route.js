@@ -5,7 +5,7 @@ export async function POST(req) {
     const { email } = await req.json();
     if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
 
-    await fetch(`https://api.resend.com/audiences/${AUDIENCE_ID}/contacts`, {
+    const resendRes = await fetch(`https://api.resend.com/audiences/${AUDIENCE_ID}/contacts`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
@@ -15,7 +15,9 @@ export async function POST(req) {
         email,
         unsubscribed: false,
       }),
-    }).catch(() => {});
+    });
+    const resendBody = await resendRes.json().catch(() => ({}));
+    console.log('Resend subscribe response:', resendRes.status, JSON.stringify(resendBody));
 
     return Response.json({ success: true });
   } catch (err) {
