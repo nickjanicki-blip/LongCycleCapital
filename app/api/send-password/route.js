@@ -3,16 +3,6 @@ export async function POST(req) {
     const { email } = await req.json();
     if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
 
-    const allowedEmails = (process.env.OBSERVER_EMAILS || '')
-      .split(',')
-      .map(e => e.trim().toLowerCase())
-      .filter(Boolean);
-
-    // Silently succeed if email not on list — don't reveal who is/isn't an observer
-    if (allowedEmails.length > 0 && !allowedEmails.includes(email.toLowerCase())) {
-      return Response.json({ success: true });
-    }
-
     await fetch('https://app.loops.so/api/v1/transactional', {
       method: 'POST',
       headers: {
