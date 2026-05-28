@@ -1,20 +1,30 @@
+const OBSERVERS_AUDIENCE_ID = 'f0b41801-f6c5-4f20-8c8c-a9d2bb60471f';
+
 export async function POST(req) {
   try {
-    const { email, password } = await req.json();
+    const { email } = await req.json();
+    if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
 
-    if (!email || !password) {
-      return Response.json({ error: 'Email and password required' }, { status: 400 });
+    // Fetch all contacts in the LCC Observers audience
+    const res = await fetch(
+      `https://api.resend.com/audiences/${OBSERVERS_AUDIENCE_ID}/contacts`,
+      {
+        headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}` },
+      }
+    );
+
+    if (!res.ok) {
+      console.error('Resend fetch failed:', res.status);
+      return Response.json({ error: 'Auth check failed' }, { status: 500 });
     }
 
-    const validPassword = process.env.OBSERVER_PASSWORD;
+    const { data: contacts } = await res.json();
+    const found = contacts.some(
+      (c) => c.email.toLowerCase() === email.toLowerCase() && !c.unsubscribed
+    );
 
-    if (!validPassword) {
-      console.error('OBSERVER_PASSWORD env var not set');
-      return Response.json({ error: 'Auth not configured' }, { status: 500 });
-    }
-
-    if (password !== validPassword) {
-      return Response.json({ error: 'Invalid credentials' }, { status: 401 });
+    if (!found) {
+      return Response.json({ error: 'Not authorized' }, { status: 401 });
     }
 
     return Response.json({ success: true });
