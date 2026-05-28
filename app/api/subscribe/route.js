@@ -1,40 +1,25 @@
+const AUDIENCE_ID = '49fcf87b-1dbb-46ac-8b21-e2d97e9137de';
+
 export async function POST(req) {
   try {
     const { email } = await req.json();
     if (!email) return Response.json({ error: 'Email required' }, { status: 400 });
 
-    const res = await fetch('https://app.loops.so/api/v1/contacts/create', {
+    await fetch(`https://api.resend.com/audiences/${AUDIENCE_ID}/contacts`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.LOOPS_API_KEY}`,
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         email,
-        userGroup: 'subscriber',
-        source: 'longcyclecapital.com',
-        mailingLists: { cmpoqhxaf0tg90jy71ic860uw: true },
+        unsubscribed: false,
       }),
-    });
-
-    // If contact already exists, update them instead
-    if (res.status === 409) {
-      await fetch('https://app.loops.so/api/v1/contacts/update', {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${process.env.LOOPS_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          mailingLists: { cmpoqhxaf0tg90jy71ic860uw: true },
-        }),
-      });
-    }
+    }).catch(() => {});
 
     return Response.json({ success: true });
   } catch (err) {
-    console.error('Loops subscribe error:', err);
+    console.error('Subscribe error:', err);
     return Response.json({ error: 'Failed to subscribe' }, { status: 500 });
   }
 }
