@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const FRED_KEY  = process.env.FRED_API_KEY?.trim();
 const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
-const CACHE     = { next: { revalidate: 86400 } };
+const CACHE     = { next: { revalidate: 3600 } }; // revalidate every hour
 
 // ── ISM Manufacturing PMI — MANUAL ENTRY ─────────────────────────────
 // ISM's PMI is proprietary and not on FRED. Update this once a month from
@@ -128,6 +127,7 @@ function composite(statusMap) {
 
 /* ── Main handler ──────────────────────────────────────────── */
 export async function GET() {
+  const FRED_KEY = process.env.FRED_API_KEY?.trim();
   if (!FRED_KEY) return NextResponse.json({ live: false });
 
   /* Parallel fetches */
