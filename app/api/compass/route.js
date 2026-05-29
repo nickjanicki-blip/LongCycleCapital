@@ -1,7 +1,16 @@
 import { NextResponse } from 'next/server';
+import { Redis } from '@upstash/redis';
 
-const FRED_BASE = 'https://api.stlouisfed.org/fred/series/observations';
-const CACHE     = { next: { revalidate: 3600 } }; // revalidate every hour
+const FRED_BASE  = 'https://api.stlouisfed.org/fred/series/observations';
+const CACHE      = { next: { revalidate: 3600 } }; // revalidate every hour
+const KV_KEY     = 'compass:last_good';
+
+function getRedis() {
+  const url   = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) return null;
+  return new Redis({ url, token });
+}
 
 // ── ISM Manufacturing PMI — MANUAL ENTRY ─────────────────────────────
 // ISM's PMI is proprietary and not on FRED. Update this once a month from
@@ -126,9 +135,25 @@ function composite(statusMap) {
 }
 
 /* ── Main handler ──────────────────────────────────────────── */
+async function kvFallback() {
+  try {
+    const redis = getRedis();
+    if (!redis) return null;
+    const cached = await redis.get(KV_KEY);
+    if (!cached) return null;
+    const data = typeof cached === 'string' ? JSON.parse(cached) : cached;
+    return NextResponse.json({ ...data, fromCache: true }, {
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=3600' },
+    });
+  } catch { return null; }
+}
+
 export async function GET() {
   const FRED_KEY = process.env.FRED_API_KEY?.trim();
-  if (!FRED_KEY) return NextResponse.json({ live: false });
+  if (!FRED_KEY) {
+    const cached = await kvFallback();
+    return cached ?? NextResponse.json({ live: false });
+  }
 
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs,
@@ -262,8 +287,8 @@ export async function GET() {
   };
   const { phase, phaseIdx, rawPhase, rawPhaseIdx, laborGated, transitional, confidence, needleAngle, norm } = composite(statusMap);
 
-  /* ── Response */
-  return NextResponse.json({
+  /* ── Save to KV */
+  const payload = {
     live: true,
     updatedAt: new Date().toISOString(),
     phase,
@@ -291,7 +316,15 @@ export async function GET() {
       ['Copper / Gold Ratio',     cgDisp,      cgRead,       cgSt        ?? 'WARNING'],
       ['USD DXY',                 dxyDisp,     dxyRead,      dxySt       ?? 'CAUTION'],
     ],
-  }, {
+  };
+
+  // Persist to KV so we have a fallback if FRED goes down
+  try {
+    const redis = getRedis();
+    if (redis) await redis.set(KV_KEY, JSON.stringify(payload));
+  } catch { /* non-fatal */ }
+
+  return NextResponse.json(payload, {
     headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800' },
   });
 }
