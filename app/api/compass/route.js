@@ -292,6 +292,6 @@ export async function GET() {
       ['USD DXY',                 dxyDisp,     dxyRead,      dxySt       ?? 'CAUTION'],
     ],
   }, {
-    headers: { 'Cache-Control': 's-maxage=86400, stale-while-revalidate=43200' },
+    headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800' },
   });
 }
