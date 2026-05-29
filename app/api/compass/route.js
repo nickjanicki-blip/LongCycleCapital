@@ -18,10 +18,10 @@ function getRedis() {
 const ISM_MANUAL = { value: 52.7, asOf: 'April 2026' };  // released 2026-05-01
 
 /* ── FRED helpers ──────────────────────────────────────────── */
-async function fredObs(id, limit = 14) {
-  if (!FRED_KEY) return null;
+async function fredObs(fredKey, id, limit = 14) {
+  if (!fredKey) return null;
   try {
-    const url = `${FRED_BASE}?series_id=${id}&api_key=${FRED_KEY}&file_type=json&sort_order=desc&limit=${limit}`;
+    const url = `${FRED_BASE}?series_id=${id}&api_key=${fredKey}&file_type=json&sort_order=desc&limit=${limit}`;
     const r = await fetch(url, CACHE);
     const d = await r.json();
     return (d.observations ?? []).filter(o => o.value !== '.');
@@ -158,14 +158,14 @@ export async function GET() {
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs,
          spxObs, dxyClose, copperClose, goldClose] = await Promise.all([
-    fredObs('T10Y2Y',       1),
-    fredObs('ICSA',         1),
-    fredObs('CPIAUCSL',    14),
-    fredObs('BAMLH0A0HYM2', 1),
-    fredObs('FEDFUNDS',     1),
-    fredObs('DFII10',       1),
-    fredObs('USSLIND',     14),
-    fredObs('SP500',      260),   // S&P 500 daily — FRED is more reliable than Yahoo ^GSPC
+    fredObs(FRED_KEY, 'T10Y2Y',       1),
+    fredObs(FRED_KEY, 'ICSA',         1),
+    fredObs(FRED_KEY, 'CPIAUCSL',    14),
+    fredObs(FRED_KEY, 'BAMLH0A0HYM2', 1),
+    fredObs(FRED_KEY, 'FEDFUNDS',     1),
+    fredObs(FRED_KEY, 'DFII10',       1),
+    fredObs(FRED_KEY, 'USSLIND',     14),
+    fredObs(FRED_KEY, 'SP500',      260),   // S&P 500 daily — FRED is more reliable than Yahoo ^GSPC
     yahooCloses('DX-Y.NYB', '5d'),
     yahooCloses('HG=F',     '5d'),
     yahooCloses('GC=F',     '5d'),
