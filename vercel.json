@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/compass",
+      "schedule": "0 * * * *"
+    }
+  ]
+}
