@@ -149,7 +149,10 @@ async function kvFallback() {
 }
 
 export async function GET() {
-  const FRED_KEY = process.env.FRED_API_KEY?.trim();
+  // Strip whitespace AND any surrounding quotes — a quoted value pasted into
+  // an env var dashboard is a common, silent cause of "key present but every
+  // call fails."
+  const FRED_KEY = process.env.FRED_API_KEY?.trim().replace(/^["']|["']$/g, '');
   if (!FRED_KEY) {
     const cached = await kvFallback();
     return cached ?? NextResponse.json({ live: false });
