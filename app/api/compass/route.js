@@ -18,14 +18,31 @@ function getRedis() {
 const ISM_MANUAL = { value: 52.7, asOf: 'April 2026' };  // released 2026-05-01
 
 /* ── FRED helpers ──────────────────────────────────────────── */
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
+// Fetch a FRED series with retry + backoff. FRED is flaky under bursts
+// (we fire ~8 at once), so a transient timeout or non-200 gets retried
+// rather than silently collapsing to null and dropping the indicator.
 async function fredObs(fredKey, id, limit = 14) {
   if (!fredKey) return null;
-  try {
-    const url = `${FRED_BASE}?series_id=${id}&api_key=${fredKey}&file_type=json&sort_order=desc&limit=${limit}`;
-    const r = await fetch(url, CACHE);
-    const d = await r.json();
-    return (d.observations ?? []).filter(o => o.value !== '.');
-  } catch { return null; }
+  const url = `${FRED_BASE}?series_id=${id}&api_key=${fredKey}&file_type=json&sort_order=desc&limit=${limit}`;
+  const MAX_ATTEMPTS = 3;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000); // 8s per attempt
+      const r = await fetch(url, { ...CACHE, signal: ctrl.signal });
+      clearTimeout(timer);
+      if (!r.ok) throw new Error(`FRED ${id} HTTP ${r.status}`);
+      const d = await r.json();
+      const obs = (d.observations ?? []).filter(o => o.value !== '.');
+      if (obs.length === 0 && attempt < MAX_ATTEMPTS) throw new Error(`FRED ${id} empty`);
+      return obs;
+    } catch {
+      if (attempt < MAX_ATTEMPTS) await sleep(400 * attempt); // 400ms, 800ms backoff
+    }
+  }
+  return null;
 }
 
 /* ── Yahoo Finance helpers ─────────────────────────────────── */
@@ -327,8 +344,12 @@ export async function GET() {
   // serve the last good cached reading.
   const fredSeries = [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, spxObs];
   const fredOk = fredSeries.filter(o => o && o.length > 0).length;
+  // Require the yield curve (highest-weighted, always-available daily series)
+  // plus a healthy majority of the rest. Without the curve, the regime is not
+  // trustworthy and must not be cached as "last good."
+  const fredHealthy = (ycObs && ycObs.length > 0) && fredOk >= 6;
 
-  if (fredOk < 4) {
+  if (!fredHealthy) {
     // FRED is degraded/down — fall back to last good KV reading rather than
     // overwriting it with nulls.
     const cached = await kvFallback();
