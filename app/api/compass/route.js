@@ -318,7 +318,25 @@ export async function GET() {
     ],
   };
 
-  // Persist to KV so we have a fallback if FRED goes down
+  // ── FRED health check ────────────────────────────────────────────────
+  // Count how many FRED series actually returned data. If FRED is failing,
+  // most will be null. Don't pollute KV with a near-empty response — instead
+  // serve the last good cached reading.
+  const fredSeries = [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, spxObs];
+  const fredOk = fredSeries.filter(o => o && o.length > 0).length;
+
+  if (fredOk < 4) {
+    // FRED is degraded/down — fall back to last good KV reading rather than
+    // overwriting it with nulls.
+    const cached = await kvFallback();
+    if (cached) return cached;
+    // No cache yet — return what we have, but DO NOT save it to KV.
+    return NextResponse.json(payload, {
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=3600, stale-if-error=604800' },
+    });
+  }
+
+  // FRED healthy — persist this as the new "last good" fallback.
   try {
     const redis = getRedis();
     if (redis) await redis.set(KV_KEY, JSON.stringify(payload));
