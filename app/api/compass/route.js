@@ -152,17 +152,22 @@ function composite(statusMap) {
 }
 
 /* ── Main handler ──────────────────────────────────────────── */
-async function kvFallback() {
+// Read the raw last-good payload object from KV (or null).
+async function readLastGood() {
   try {
     const redis = getRedis();
     if (!redis) return null;
     const cached = await redis.get(KV_KEY);
     if (!cached) return null;
-    const data = typeof cached === 'string' ? JSON.parse(cached) : cached;
-    return NextResponse.json({ ...data, fromCache: true }, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=3600' },
-    });
+    return typeof cached === 'string' ? JSON.parse(cached) : cached;
   } catch { return null; }
+}
+
+function kvFallbackResponse(lastGood) {
+  if (!lastGood) return null;
+  return NextResponse.json({ ...lastGood, fromCache: true }, {
+    headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=3600' },
+  });
 }
 
 export async function GET() {
@@ -170,8 +175,13 @@ export async function GET() {
   // an env var dashboard is a common, silent cause of "key present but every
   // call fails."
   const FRED_KEY = process.env.FRED_API_KEY?.trim().replace(/^["']|["']$/g, '');
+
+  // Load last-good once up front — used both as a hard fallback (FRED down)
+  // and for per-field carry-forward when only some series are missing.
+  const lastGood = await readLastGood();
+
   if (!FRED_KEY) {
-    const cached = await kvFallback();
+    const cached = kvFallbackResponse(lastGood);
     return cached ?? NextResponse.json({ live: false });
   }
 
@@ -338,29 +348,51 @@ export async function GET() {
     ],
   };
 
+  // ── Per-field carry-forward ──────────────────────────────────────────
+  // If an individual indicator came back empty (FRED dropped that one series),
+  // carry forward its last good value rather than showing a blank. A single
+  // flaky series should never blank out, and we must never overwrite a real
+  // cached value with null. Match by indicator name.
+  let carried = 0;
+  if (lastGood) {
+    payload.tier1 = payload.tier1.map(t => {
+      if (t.value == null) {
+        const prev = lastGood.tier1?.find(p => p.name === t.name);
+        if (prev && prev.value != null) { carried++; return { ...prev, stale: true }; }
+      }
+      return t;
+    });
+    payload.tier2 = payload.tier2.map(t => {
+      if (t[1] == null) {
+        const prev = lastGood.tier2?.find(p => p[0] === t[0]);
+        if (prev && prev[1] != null) { carried++; return [...prev]; }
+      }
+      return t;
+    });
+  }
+
   // ── FRED health check ────────────────────────────────────────────────
-  // Count how many FRED series actually returned data. If FRED is failing,
-  // most will be null. Don't pollute KV with a near-empty response — instead
-  // serve the last good cached reading.
+  // How many FRED series returned data this pull (before carry-forward)?
   const fredSeries = [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, spxObs];
   const fredOk = fredSeries.filter(o => o && o.length > 0).length;
-  // Require the yield curve (highest-weighted, always-available daily series)
-  // plus a healthy majority of the rest. Without the curve, the regime is not
-  // trustworthy and must not be cached as "last good."
+  // Require the yield curve (highest-weighted daily series) plus a healthy
+  // majority. Without the curve, the regime isn't trustworthy.
   const fredHealthy = (ycObs && ycObs.length > 0) && fredOk >= 6;
 
-  if (!fredHealthy) {
-    // FRED is degraded/down — fall back to last good KV reading rather than
-    // overwriting it with nulls.
-    const cached = await kvFallback();
-    if (cached) return cached;
-    // No cache yet — return what we have, but DO NOT save it to KV.
+  if (!fredHealthy && !lastGood) {
+    // FRED degraded and we have nothing cached — return what we have, no save.
     return NextResponse.json(payload, {
       headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=3600, stale-if-error=604800' },
     });
   }
+  if (!fredHealthy) {
+    // FRED degraded but we have a good cache — serve it rather than a
+    // half-empty live reading, and don't overwrite the cache.
+    return kvFallbackResponse(lastGood);
+  }
 
-  // FRED healthy — persist this as the new "last good" fallback.
+  // FRED healthy — persist as new "last good". Carry-forward above ensures we
+  // never write a null over a previously-good field.
   try {
     const redis = getRedis();
     if (redis) await redis.set(KV_KEY, JSON.stringify(payload));
