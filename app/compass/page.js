@@ -323,15 +323,17 @@ function IndicatorCard({ name, value, reading, status, onClick }) {
   );
 }
 
+// Placeholder rows shown only until live data loads. Kept roughly current so a
+// brief pre-load flash isn't wildly stale; the live pull overwrites all of it.
 const gatedRows = [
-  ['Leading Indicator Index', '96.2', 'Declining 4 of 5 months', 'WARNING'],
-  ['Conf. Board LEI YoY', '−3.1%', 'Negative 6 consecutive months', 'ALERT'],
-  ['S&P 500 vs 200 DMA', '−1.8%', 'Below 200-day moving average', 'CAUTION'],
-  ['High Yield Spreads', '4.2%', 'Elevated, trending wider', 'WARNING'],
-  ['Fed Funds Rate', '5.25%', 'Holding — cuts not priced', 'CAUTION'],
-  ['10yr TIPS Real Yield', '2.14%', 'Multi-year restrictive', 'WARNING'],
-  ['Copper / Gold Ratio', '0.18', 'Falling — risk-off signal', 'WARNING'],
-  ['USD DXY', '104.8', 'Approaching multi-year extreme', 'CAUTION'],
+  ['Leading Indicator Index', '1.7', 'Rising trend', 'OK'],
+  ['Conf. Board LEI YoY', '+0.62 pt', 'Steady', 'OK'],
+  ['S&P 500 vs 200 DMA', '+11.0%', 'Strong uptrend', 'OK'],
+  ['High Yield Spreads', '2.72%', 'Tight credit', 'OK'],
+  ['Fed Funds Rate', '3.64%', 'Near neutral', 'CAUTION'],
+  ['10yr TIPS Real Yield', '2.06%', 'Restrictive real rates', 'WARNING'],
+  ['Copper / Gold Ratio', '0.140', 'Risk-off signal', 'WARNING'],
+  ['USD DXY', '99.0', 'Normal range', 'CAUTION'],
 ];
 
 function GatedContent({ rows = gatedRows, onRowClick }) {
@@ -454,12 +456,12 @@ function generateRegimeBlurb(phase, confidence, indicators) {
   return [lead, signal, posture].filter(Boolean).join(' ');
 }
 
-// Hardcoded fallbacks shown until live data loads
+// Placeholder rows shown only until live data loads; overwritten by the live pull.
 const FALLBACK_T1 = [
-  { name: 'Yield Curve (2Y–10Y)', value: '−0.14%', reading: 'Inverted',          status: 'WARNING' },
+  { name: 'Yield Curve (2Y–10Y)', value: '+0.47%', reading: 'Normal slope',       status: 'OK' },
   { name: 'ISM Manufacturing PMI', value: '52.7',   reading: 'Modest expansion · manual', status: 'CAUTION' },
-  { name: 'Unemployment Claims',   value: '247k',   reading: 'Rising trend',      status: 'CAUTION' },
-  { name: 'CPI Year-over-Year',    value: '3.8%',   reading: 'Above 2% target',   status: 'CAUTION' },
+  { name: 'Unemployment Claims',   value: '215k',   reading: 'Tight labor market', status: 'OK' },
+  { name: 'CPI Year-over-Year',    value: '3.9%',   reading: 'Materially above target', status: 'WARNING' },
 ];
 
 export default function CompassPage() {
@@ -467,11 +469,11 @@ export default function CompassPage() {
   const [drawer, setDrawer] = useState(null);
 
   // Live data state — initialised to hardcoded fallbacks
-  const [livePhase,      setLivePhase]      = useState('Late Cycle');
-  const [livePhaseIdx,   setLivePhaseIdx]   = useState(2);
-  const [liveConfidence, setLiveConfidence] = useState(0.82);
-  const [liveNeedle,     setLiveNeedle]     = useState(90);  // Late Cycle zone centre
-  const [liveUpdated,    setLiveUpdated]    = useState('May 24, 2026');
+  const [livePhase,      setLivePhase]      = useState('Expansion');
+  const [livePhaseIdx,   setLivePhaseIdx]   = useState(1);
+  const [liveConfidence, setLiveConfidence] = useState(0.65);
+  const [liveNeedle,     setLiveNeedle]     = useState(126);  // Expansion zone centre
+  const [liveUpdated,    setLiveUpdated]    = useState('—');
   const [liveRawPhase,   setLiveRawPhase]   = useState(null);
   const [liveLaborGated, setLiveLaborGated] = useState(false);
   const [liveTransitional, setLiveTransitional] = useState(false);
