@@ -15,7 +15,7 @@ function getRedis() {
 // ── ISM Manufacturing PMI — MANUAL ENTRY ─────────────────────────────
 // ISM's PMI is proprietary and not on FRED. Update this once a month from
 // ismworld.org (released the first business day, for the prior month).
-const ISM_MANUAL = { value: 54.0, asOf: 'May 2026' };  // released 2026-06-01
+const ISM_MANUAL = { value: 53.3, asOf: 'Jun 2026' };  // released 2026-07-01
 
 /* ── FRED helpers ──────────────────────────────────────────── */
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));

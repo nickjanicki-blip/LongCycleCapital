@@ -459,7 +459,7 @@ function generateRegimeBlurb(phase, confidence, indicators) {
 // Placeholder rows shown only until live data loads; overwritten by the live pull.
 const FALLBACK_T1 = [
   { name: 'Yield Curve (2Y–10Y)', value: '+0.47%', reading: 'Normal slope',       status: 'OK' },
-  { name: 'ISM Manufacturing PMI', value: '54.0',   reading: 'Modest expansion · manual', status: 'CAUTION' },
+  { name: 'ISM Manufacturing PMI', value: '53.3',   reading: 'Modest expansion · manual', status: 'CAUTION' },
   { name: 'Unemployment Claims',   value: '215k',   reading: 'Tight labor market', status: 'OK' },
   { name: 'CPI Year-over-Year',    value: '3.9%',   reading: 'Materially above target', status: 'WARNING' },
 ];
