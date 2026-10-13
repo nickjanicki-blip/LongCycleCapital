@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/lib/AuthContext';
 
 const C = {
   navy: '#1F4E78', gold: '#B8860B', goldBright: '#F0C040',
@@ -30,6 +31,10 @@ const navLinks = [
 
 export default function Header() {
   const pathname = usePathname();
+  const { isAuthenticated } = useAuth();
+  const links = isAuthenticated
+    ? navLinks.map(l => (l.href === '/login' ? { href: '/dashboard', label: 'Dashboard' } : l))
+    : navLinks;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -77,7 +82,7 @@ export default function Header() {
           </Link>
 
           <nav className="desktop-nav" style={{ alignItems: 'center', gap: 2 }}>
-            {navLinks.map(({ href, label }) => {
+            {links.map(({ href, label }) => {
               const active = pathname === href;
               return (
                 <Link key={href} href={href} style={{
@@ -120,7 +125,7 @@ export default function Header() {
         transition: 'opacity 240ms ease',
       }}>
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-          {navLinks.map(({ href, label }) => (
+          {links.map(({ href, label }) => (
             <Link key={href} href={href} style={{
               fontFamily: "Georgia,'Times New Roman',serif",
               fontSize: 'clamp(28px,8vw,42px)', fontWeight: 400, letterSpacing: '-0.01em',

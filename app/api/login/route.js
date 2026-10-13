@@ -1,3 +1,6 @@
+import { NextResponse } from 'next/server';
+import { SESSION_COOKIE, makeSessionValue, sessionCookieOptions } from '@/lib/dashboard/auth';
+
 const OBSERVERS_AUDIENCE_ID = 'f0b41801-f6c5-4f20-8c8c-a9d2bb60471f';
 
 export async function POST(req) {
@@ -27,7 +30,10 @@ export async function POST(req) {
       return Response.json({ error: 'Not authorized' }, { status: 401 });
     }
 
-    return Response.json({ success: true });
+    // Server-side session so gated APIs (e.g. /api/dashboard) can verify access.
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(SESSION_COOKIE, makeSessionValue(email), sessionCookieOptions());
+    return response;
   } catch (err) {
     console.error('Login error:', err);
     return Response.json({ error: 'Login failed' }, { status: 500 });

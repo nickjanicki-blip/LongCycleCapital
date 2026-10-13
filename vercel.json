@@ -3,6 +3,10 @@
     {
       "path": "/api/compass",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/dashboard/run",
+      "schedule": "30 22 * * 1-6"
     }
   ]
 }
