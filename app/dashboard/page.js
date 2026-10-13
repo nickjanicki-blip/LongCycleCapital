@@ -144,7 +144,7 @@ function FxTab({ fx, isOwner, inputs, saveInputs }) {
   return (
     <>
       <div style={{ fontFamily: F.sans, fontSize: 12.5, color: C.muted, marginBottom: 14 }}>
-        Risk {fx.riskPct}% standard / {fx.fatPct}% fat pitch. {fx.regimeNote} Layer 1 needs opposite policy trajectories for 6+ months, a 24-month extreme in the rate differential, and your guidance confirmation.
+        Risk {fx.riskPct}% standard / {fx.fatPct}% fat pitch. {fx.regimeNote} Layer 1: policy-rate gap at a 24-month extreme and not narrowing for 6 months, plus your guidance confirmation. Direction always fades the crowded side of CFTC positioning.
       </div>
       {fx.pairs.map(p => (
         <Card key={p.pair} title={p.pair} right={<Badge s={p.status} />} accent={STATUS_COLOR[p.status] || C.navy}>
@@ -152,9 +152,9 @@ function FxTab({ fx, isOwner, inputs, saveInputs }) {
             <>
               {p.pauseReason && <div style={{ fontFamily: F.sans, fontSize: 12.5, color: C.red, marginBottom: 8 }}>{p.pauseReason}</div>}
               <Layer n="L1" label="Central bank divergence" met={p.l1.met}
-                detail={`${p.l1.baseBank} ${p.l1.baseRate}% (${p.l1.tb}) vs ${p.l1.quoteBank} ${p.l1.quoteRate}% (${p.l1.tq}) as of ${p.l1.asOf}. Opposite for ${p.l1.months} mo. Differential ${p.l1.diff} ${p.l1.atExtreme ? 'at' : 'not at'} 24-month extreme.${p.l1.direction ? ` Implies ${p.l1.direction}.` : ''}`} />
+                detail={`${p.l1.baseBank} ${p.l1.baseRate}% (${p.l1.tb}) vs ${p.l1.quoteBank} ${p.l1.quoteRate}% (${p.l1.tq}) as of ${p.l1.asOf}. Gap ${p.l1.gap}pt vs 24-month max ${p.l1.max24}pt: ${p.l1.atExtreme ? 'at extreme' : 'not at extreme'}, ${p.l1.established ? 'held 6+ months' : 'not established or narrowing'}.`} />
               <Layer n="L2" label="CFTC positioning extreme" met={p.l2.met}
-                detail={`Z ${p.l2.z} vs 3-year history, ${p.l2.weeks} week(s) beyond ±2${p.l2.crowded ? `, crowded ${p.l2.crowded}` : ''}. Report ${p.l2.asOf}.`} />
+                detail={`Z ${p.l2.z} vs 3-year history, ${p.l2.weeks} week(s) beyond ±2${p.l2.crowded ? `, crowded ${p.l2.crowded} → trade ${p.direction}` : ''}${p.fatPitchQuant ? ' · fat pitch eligible on the numbers' : ''}. Report ${p.l2.asOf}.`} />
               <Layer n="L3" label="Weekly technical trigger" met={p.l3.met}
                 detail={p.l3.triggers.length ? p.l3.triggers.map(t => `${t.name} (${t.dir})`).join('; ') : 'No trigger on the last closed weekly bar.'} />
               {p.missing.length > 0 && <div style={{ fontFamily: F.sans, fontSize: 12, color: C.muted, marginTop: 10 }}>Missing: {p.missing.join('; ')}.</div>}

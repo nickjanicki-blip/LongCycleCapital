@@ -78,14 +78,20 @@ const SCORE = { OK: 0, CAUTION: 1, WARNING: 2, ALERT: 3 };
 const WEIGHTS = {
   yc: 0.14, ism: 0.12, claims: 0.11, cpi: 0.09,
   hy: 0.10, leiTrend: 0.06, leiYoY: 0.07, spx: 0.05,
-  ff: 0.05, tips: 0.08, copper: 0.09, dxy: 0.04,
+  ff: 0.05, tips: 0.08, dxy: 0.04,
+  // Copper/gold removed from the score (Oct 2026): central-bank gold buying broke it
+  // as a growth signal, and dropping it improved 2000-2026 recession detection.
+  // Still displayed as information.
+  copper: 0,
 };
+// Hysteresis: hold the prior regime until the score clears the zone boundary by this much.
+const HYSTERESIS = 0.03;
 
 const PHASES = ['Recovery', 'Expansion', 'Late Cycle', 'Contraction', 'Crisis'];
 // Angular bounds of each phase on the 180°→0° dial (5 × 36°)
 const ZONE = [[180, 144], [144, 108], [108, 72], [72, 36], [36, 0]];
 
-function composite(statusMap) {
+function composite(statusMap, { sahm = null, prevPhaseIdx = null } = {}) {
   let wSum = 0, scoreSum = 0;
   for (const [k, w] of Object.entries(WEIGHTS)) {
     const s = statusMap[k];
@@ -123,12 +129,21 @@ function composite(statusMap) {
   // regime to Late Cycle. Contraction/Crisis require the labor market —
   // the coincident confirmation signal — to actually roll over. This is
   // how NBER dates recessions: employment confirms, not the yield curve.
+  // Claims use the 4-week average; the Sahm Rule (unemployment-rate confirmation)
+  // can also open Crisis.
   const labor = statusMap.claims;                  // OK | CAUTION | WARNING | ALERT
-  const laborCap = labor === 'ALERT'   ? 4         // labor breaking down → Crisis allowed
-                 : labor === 'WARNING' ? 3         // labor softening → Contraction allowed
-                 : 2;                              // OK / CAUTION / unknown → Late Cycle max
-  const phaseIdx = Math.min(rawIdx, laborCap);
+  const sahmTriggered = sahm != null && sahm >= 0.5;
+  const laborCap = (labor === 'ALERT' || sahmTriggered) ? 4   // labor breaking down → Crisis allowed
+                 : labor === 'WARNING' ? 3                   // labor softening → Contraction allowed
+                 : 2;                                        // OK / CAUTION / unknown → Late Cycle max
+  let phaseIdx = Math.min(rawIdx, laborCap);
   const laborGated = phaseIdx < rawIdx;            // gate is actively holding the regime back
+
+  let hysteresisHeld = false;
+  if (prevPhaseIdx != null && phaseIdx !== prevPhaseIdx) {
+    const lo = prevPhaseIdx * 0.2 - HYSTERESIS, hi = (prevPhaseIdx + 1) * 0.2 + HYSTERESIS;
+    if (norm >= lo && norm < hi) { phaseIdx = Math.min(prevPhaseIdx, laborCap); hysteresisHeld = phaseIdx !== Math.min(rawIdx, laborCap); }
+  }
 
   // ── Needle angle: continuous map of norm across the dial ─────────────
   // The needle rests BETWEEN zones at a boundary instead of snapping to a
@@ -144,6 +159,8 @@ function composite(statusMap) {
     rawPhase: PHASES[rawIdx],
     rawPhaseIdx: rawIdx,
     laborGated,
+    hysteresisHeld,
+    sahmTriggered,
     transitional: conf < 0.60,
     confidence: +conf.toFixed(2),
     needleAngle: +needleAngle.toFixed(1),
@@ -187,9 +204,9 @@ export async function GET() {
 
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs,
-         spxObs, dxyClose, copperClose, goldClose] = await Promise.all([
+         spxObs, dxyClose, copperClose, goldClose, sahmObs] = await Promise.all([
     fredObs(FRED_KEY, 'T10Y2Y',       1),
-    fredObs(FRED_KEY, 'ICSA',         1),
+    fredObs(FRED_KEY, 'ICSA',         4),
     fredObs(FRED_KEY, 'CPIAUCSL',    14),
     fredObs(FRED_KEY, 'BAMLH0A0HYM2', 1),
     fredObs(FRED_KEY, 'FEDFUNDS',     1),
@@ -199,6 +216,7 @@ export async function GET() {
     yahooCloses('DX-Y.NYB', '5d'),
     yahooCloses('HG=F',     '5d'),
     yahooCloses('GC=F',     '5d'),
+    fredObs(FRED_KEY, 'SAHMREALTIME', 1),
   ]);
 
   const fv = (obs, i = 0) => {
@@ -220,9 +238,12 @@ export async function GET() {
   const ismRead = ism != null ? `${descr} · manual (${ISM_MANUAL.asOf})` : null;
 
   /* ── Claims */
-  const claims     = fv(claimsObs);
+  // Status and the labor gate use the 4-week average so one noisy week can't flip the regime.
+  const claimsWk   = (claimsObs ?? []).map(o => parseFloat(o.value)).filter(v => !Number.isNaN(v));
+  const claims     = claimsWk.length ? claimsWk.reduce((a, b) => a + b, 0) / claimsWk.length : null;
   const claimsSt   = clampRev(claims, [220000, 240000, 260000]);
-  const claimsDisp = claims != null ? `${Math.round(claims / 1000)}k` : null;
+  const claimsDisp = claims != null ? `${Math.round(claims / 1000)}k 4-wk avg` : null;
+  const sahm       = fv(sahmObs);
   const claimsRead = claims != null ? (claims < 220000 ? 'Tight labor market' : claims < 240000 ? 'Normal range' : claims < 260000 ? 'Rising trend' : 'Labor softening') : null;
 
   /* ── CPI YoY */
@@ -306,7 +327,7 @@ export async function GET() {
     const ratio = (copper / gold) * 100;
     cgSt   = clamp(ratio, [0.25, 0.20, 0.15]);
     cgDisp = ratio.toFixed(3);
-    cgRead = ratio > 0.25 ? 'Risk-on, growth expected' : ratio > 0.20 ? 'Declining risk appetite' : ratio > 0.15 ? 'Risk-off signal' : 'Strong risk-off';
+    cgRead = (ratio > 0.25 ? 'Risk-on, growth expected' : ratio > 0.20 ? 'Declining risk appetite' : ratio > 0.15 ? 'Risk-off signal' : 'Strong risk-off') + ' · info only, not scored';
   }
 
   /* ── Composite phase + confidence */
@@ -315,7 +336,8 @@ export async function GET() {
     hy: hySt, leiTrend: leiTrendSt, leiYoY: leiYoYSt, spx: spxSt,
     ff: ffSt, tips: tipsSt, copper: cgSt, dxy: dxySt,
   };
-  const { phase, phaseIdx, rawPhase, rawPhaseIdx, laborGated, transitional, confidence, needleAngle, norm } = composite(statusMap);
+  const { phase, phaseIdx, rawPhase, rawPhaseIdx, laborGated, hysteresisHeld, sahmTriggered, transitional, confidence, needleAngle, norm } =
+    composite(statusMap, { sahm, prevPhaseIdx: lastGood?.phaseIdx ?? null });
 
   /* ── Save to KV */
   const payload = {
@@ -326,6 +348,9 @@ export async function GET() {
     rawPhase,
     rawPhaseIdx,
     laborGated,
+    hysteresisHeld,
+    sahm,
+    sahmTriggered,
     transitional,
     confidence,
     needleAngle,
@@ -373,7 +398,7 @@ export async function GET() {
 
   // ── FRED health check ────────────────────────────────────────────────
   // How many FRED series returned data this pull (before carry-forward)?
-  const fredSeries = [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, spxObs];
+  const fredSeries = [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs, spxObs];  // Sahm is optional; gate falls back to claims
   const fredOk = fredSeries.filter(o => o && o.length > 0).length;
   // Require the yield curve (highest-weighted daily series) plus a healthy
   // majority. Without the curve, the regime isn't trustworthy.
