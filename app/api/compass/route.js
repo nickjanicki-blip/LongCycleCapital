@@ -83,6 +83,8 @@ const WEIGHTS = {
   // as a growth signal, and dropping it improved 2000-2026 recession detection.
   // Still displayed as information.
   copper: 0,
+  // Yield-curve inversion memory (recession playbook Tier 1: inverted 6+ months within 24).
+  ycMem: 0.10,
 };
 // Hysteresis: hold the prior regime until the score clears the zone boundary by this much.
 const HYSTERESIS = 0.03;
@@ -205,8 +207,8 @@ export async function GET() {
   /* Parallel fetches */
   const [ycObs, claimsObs, cpiObs, hyObs, ffObs, tipsObs, leiObs,
          spxObs, dxyClose, copperClose, goldClose, sahmObs] = await Promise.all([
-    fredObs(FRED_KEY, 'T10Y2Y',       1),
-    fredObs(FRED_KEY, 'ICSA',         4),
+    fredObs(FRED_KEY, 'T10Y2Y',     760),   // ~3 years daily, for the inversion memory
+    fredObs(FRED_KEY, 'ICSA',        56),   // 4-week average vs its 52-week low
     fredObs(FRED_KEY, 'CPIAUCSL',    14),
     fredObs(FRED_KEY, 'BAMLH0A0HYM2', 1),
     fredObs(FRED_KEY, 'FEDFUNDS',     1),
@@ -239,12 +241,25 @@ export async function GET() {
 
   /* ── Claims */
   // Status and the labor gate use the 4-week average so one noisy week can't flip the regime.
-  const claimsWk   = (claimsObs ?? []).map(o => parseFloat(o.value)).filter(v => !Number.isNaN(v));
-  const claims     = claimsWk.length ? claimsWk.reduce((a, b) => a + b, 0) / claimsWk.length : null;
-  const claimsSt   = clampRev(claims, [220000, 240000, 260000]);
+  // Relative, not absolute: the 4-week average vs its own 52-week low. Fixed levels drift with the
+  // size of the labor force (normal claims were 300-400k in 2000-2016 and ~210k now).
+  const claimsWk   = (claimsObs ?? []).map(o => parseFloat(o.value)).filter(v => !Number.isNaN(v));   // newest first
+  const avg4       = claimsWk.slice(0, 53).map((_, k) => claimsWk.slice(k, k + 4)).filter(w => w.length === 4).map(w => w.reduce((a, b) => a + b, 0) / 4);
+  const claims     = avg4.length ? avg4[0] : null;
+  const claimsRise = avg4.length >= 13 ? claims / Math.min(...avg4.slice(0, 52)) : null;
+  const claimsSt   = clampRev(claimsRise, [1.20, 1.30, 1.50]);
   const claimsDisp = claims != null ? `${Math.round(claims / 1000)}k 4-wk avg` : null;
   const sahm       = fv(sahmObs);
-  const claimsRead = claims != null ? (claims < 220000 ? 'Tight labor market' : claims < 240000 ? 'Normal range' : claims < 260000 ? 'Rising trend' : 'Labor softening') : null;
+  const claimsRead = claimsRise != null ? `+${Math.round((claimsRise - 1) * 100)}% vs 12-month low · ${claimsRise < 1.2 ? 'Stable labor market' : claimsRise < 1.3 ? 'Rising, watch trend' : claimsRise < 1.5 ? 'Labor softening' : 'Labor breaking down'}` : null;
+
+  /* ── Yield-curve inversion memory: month-end readings over the last 24 months */
+  const ycMonthEnd = new Map();
+  for (const o of ycObs ?? []) { const v = parseFloat(o.value); const m = o.date.slice(0, 7); if (!Number.isNaN(v) && !ycMonthEnd.has(m)) ycMonthEnd.set(m, v); }
+  const ycMonths   = [...ycMonthEnd.values()].slice(0, 24);
+  const invMonths  = ycMonths.filter(v => v < 0).length;
+  const ycMemSt    = ycMonths.length >= 12 ? (invMonths >= 6 ? S.ALERT : invMonths >= 3 ? S.WARN : invMonths >= 1 ? S.CAU : S.OK) : null;
+  const ycMemDisp  = ycMonths.length ? `${invMonths} of ${ycMonths.length} mo` : null;
+  const ycMemRead  = invMonths >= 6 ? 'Sustained inversion in the last 2 years' : invMonths >= 3 ? 'Recent inversion' : invMonths >= 1 ? 'Brief inversion' : 'No recent inversion';
 
   /* ── CPI YoY */
   let cpiYoY = null;
@@ -334,7 +349,7 @@ export async function GET() {
   const statusMap = {
     yc: ycSt, ism: ismSt, claims: claimsSt, cpi: cpiSt,
     hy: hySt, leiTrend: leiTrendSt, leiYoY: leiYoYSt, spx: spxSt,
-    ff: ffSt, tips: tipsSt, copper: cgSt, dxy: dxySt,
+    ff: ffSt, tips: tipsSt, copper: cgSt, dxy: dxySt, ycMem: ycMemSt,
   };
   const { phase, phaseIdx, rawPhase, rawPhaseIdx, laborGated, hysteresisHeld, sahmTriggered, transitional, confidence, needleAngle, norm } =
     composite(statusMap, { sahm, prevPhaseIdx: lastGood?.phaseIdx ?? null });
@@ -370,6 +385,7 @@ export async function GET() {
       ['10yr TIPS Real Yield',    tipsDisp,    tipsRead,     tipsSt      ?? 'WARNING'],
       ['Copper / Gold Ratio',     cgDisp,      cgRead,       cgSt        ?? 'WARNING'],
       ['USD DXY',                 dxyDisp,     dxyRead,      dxySt       ?? 'CAUTION'],
+      ['Yield Curve Inversion Memory', ycMemDisp, ycMemRead,   ycMemSt     ?? 'CAUTION'],
     ],
   };
 
