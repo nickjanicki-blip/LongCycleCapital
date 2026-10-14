@@ -255,6 +255,7 @@ function BtcTab({ b }) {
         <Row k="MVRV / MVRV-Z" v={`${b.mvrv} / ${b.mvrvZ} (CoinMetrics ${b.cmDate})`} />
         <Row k="Puell Multiple" v={b.puell} />
         <Row k="Pi Cycle (111DMA ÷ 2x350DMA, top at 1.0)" v={b.piGap} />
+        {b.brake && <Row k="Drawdown brake (sell half at −50% from cycle peak)" v={`$${b.brake.level.toLocaleString()} · ${b.brake.hit ? 'TRIGGERED' : `${b.brake.pctToBrake}% above`}${b.brake.firedThisCycle ? ' · already fired this cycle' : ''}`} />}
         <div style={{ fontFamily: F.sans, fontSize: 12, color: C.muted, marginTop: 10 }}>Regime overlay: {b.regimeNote}</div>
       </Card>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(280px,1fr))', gap: 16 }}>
