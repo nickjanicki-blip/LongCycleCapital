@@ -1,7 +1,7 @@
 import { GET as compassGET } from '@/app/api/compass/route';
 import { getSession, isCronRequest } from '@/lib/dashboard/auth';
 import { runEngine, statusMap } from '@/lib/dashboard/engine';
-import { getInputs, getJournal, getLatest, saveSnapshot } from '@/lib/dashboard/store';
+import { getHistory, getInputs, getJournal, getLatest, saveSnapshot } from '@/lib/dashboard/store';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -39,8 +39,8 @@ export async function GET(req) {
   if (!isCronRequest(req) && !session?.isOwner) return Response.json({ error: 'Not authorized' }, { status: 401 });
 
   const compass = await (await compassGET()).json();
-  const [inputs, journal, prev] = await Promise.all([getInputs(), getJournal(), getLatest()]);
-  const snapshot = await runEngine({ compass, inputs, journal, prev });
+  const [inputs, journal, prev, history] = await Promise.all([getInputs(), getJournal(), getLatest(), getHistory(30)]);
+  const snapshot = await runEngine({ compass, inputs, journal, prev, history });
 
   const summary = { runAt: snapshot.runAt, statuses: statusMap(snapshot), gsr: snapshot.gsr?.ratio, btc: snapshot.btc?.price, vix: snapshot.vix, errors: snapshot.errors.length };
   await saveSnapshot(snapshot, summary);

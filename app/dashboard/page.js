@@ -78,6 +78,11 @@ function BriefTab({ s, isOwner, inputs, saveInputs }) {
         <div style={{ fontFamily: F.mono, fontSize: 11, color: 'rgba(250,249,246,0.45)', marginTop: 10 }}>
           FX risk {r.adjustments.fx.risk}% / {r.adjustments.fx.fat}% fat pitch · VIX {s.vix?.toFixed(1)} · ISM {s.ismAsOf || 'n/a'}
         </div>
+        {b.reserve && (
+          <div style={{ fontFamily: F.sans, fontSize: 12, color: 'rgba(250,249,246,0.70)', marginTop: 8 }}>
+            T-bill reserve: at least {b.reserve.floorPct}% (${b.reserve.amount.toLocaleString()}) untouched. {b.reserve.note.split('. ')[0]}.
+          </div>
+        )}
       </div>
 
       <Card title="On watch" accent={C.gold}>
